@@ -1,0 +1,2 @@
+functies:
+	- elke MAP op je bureaublad in te kunnen en ook daar alles te kunnen gebruiken

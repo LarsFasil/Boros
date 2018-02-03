@@ -1,0 +1,2 @@
+[2016.01.23 13:46:06] App Info: reading settings..
+[2016.01.23 13:46:06] App Info: reading encrypted settings..
