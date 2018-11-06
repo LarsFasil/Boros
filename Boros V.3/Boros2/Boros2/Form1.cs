@@ -14,6 +14,8 @@ using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Threading;
 
+
+
 namespace Boros2
 {
     public partial class Form1 : Form
@@ -23,7 +25,7 @@ namespace Boros2
         SpeechRecognitionEngine sre = new SpeechRecognitionEngine();
         Choices clist = new Choices();
         new string[] nums = new string[30];
-        
+
         new List<string> holder = new List<string>();
 
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
@@ -34,13 +36,15 @@ namespace Boros2
         string question, toClose, cProgramName;
         Action<string> method;
 
+
+
         public Form1()
         {
             InitializeComponent();
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             updDictionarys();
-            
-            
+
+
 
             Grammar gr = new Grammar(new GrammarBuilder(clist));
 
@@ -58,20 +62,36 @@ namespace Boros2
                 MessageBox.Show(ex.Message, "Error");
             }
 
+            OpenExcelFile();
         }
+
+        public void OpenExcelFile()
+        {
+            string excelPath = Directory.GetCurrentDirectory() + "\\CommandsList.xlsx";
+            //MessageBox.Show(Directory.GetCurrentDirectory(), excelPath);
+            
+            Excel excel = new Excel(@excelPath, 1);
+            for (int i = 0; i < 4; i++)
+            {
+                MessageBox.Show(excel.ReadCell(i, 0));
+                
+            }
+            excel.Close();
+        }
+
 
         private void updDictionarys()
         {
-            
-            for (int i = 0; i < nums.Length-10; i++)
+
+            for (int i = 0; i < nums.Length - 10; i++)
             {
-                nums[i] = (i+1).ToString();
+                nums[i] = (i + 1).ToString();
                 //listBox1.Items.Add(nums[i]);
-                
+
             }
             for (int i = 0; i < 10; i++)
             {
-                nums[i + (nums.Length-10)] = "1";
+                nums[i + (nums.Length - 10)] = "1";
                 //listBox1.Items.Add(nums[i + (nums.Length - 10)]);
             }
 
@@ -84,20 +104,20 @@ namespace Boros2
 
         private void ProcessDirectory(string dirPath)
         {
-           
+
             string[] fileEntries = Directory.GetFiles(dirPath);
             //string[] files = new string[fileEntries.Count]; // hoeft niet
             foreach (string filePath in fileEntries)
             {
-                
-                holder.Add("open " + Path.GetFileName(filePath).ToLower().Replace(".exe","").Replace(".url","").Replace(".lnk", "").Replace(".txt", ""));
-                
+
+                holder.Add("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
+
             }
 
             for (int i = 0; i < fileEntries.Length; i++)
             {
                 pathToName.Add(fileEntries[i], holder[i]); //maybe later open voor zetten
-                
+
             }
 
 
@@ -120,7 +140,8 @@ namespace Boros2
                     listBox1.Items.Add("free to talk");
                 }
             }
-            else {
+            else
+            {
                 if (choises != 0)
                 {
                     for (int i = 0; i < choises; i++)
@@ -128,7 +149,7 @@ namespace Boros2
                         if (e.Result.Text.ToString() == nums[i])
                         {
                             ss.SpeakAsync("you chose number " + nums[i]);
-                            CloseChoise(i);                                      
+                            CloseChoise(i);
                             choises = 0;
                         }
                         //else
@@ -137,9 +158,11 @@ namespace Boros2
                         //}
                     }
 
-                    
+
                 }
-                else {if (checkingSure)
+                else
+                {
+                    if (checkingSure)
                     {
 
                         if (e.Result.Text.ToString() == "yes")
@@ -168,9 +191,9 @@ namespace Boros2
                         {
                             if (e.Result.Text.ToString().Contains("close"))
                             {
-                                                                                                // manier van close en open veranderen in 2 aparte delen. net als choises
+                                // manier van close en open veranderen in 2 aparte delen. net als choises
                             }
-                              else
+                            else
                             {
 
                                 switch (e.Result.Text.ToString())
@@ -246,15 +269,16 @@ namespace Boros2
                                         Application.Exit();
                                         break;
                                 }
+                            }
                         }
-                        }
-                        
-                        
-                    } }
 
-            
 
-            
+                    }
+                }
+
+
+
+
 
 
                 listBox1.Items.Add(e.Result.Text.ToString());
@@ -262,7 +286,7 @@ namespace Boros2
 
         }
 
-       
+
 
         void test()
         {
@@ -278,21 +302,22 @@ namespace Boros2
 
         void OpenSomething(string pPath, string pName)
         {
-            
+
             Process p = Process.Start(pPath);
             listBox1.Items.Add(pPath);
-            pName = pName.Replace("open ","");
+            pName = pName.Replace("open ", "");
             ss.SpeakAsync("Opening " + pName);
             if (programIDS.ContainsKey(pPath))
             {
-                
+
                 programIDS[pPath].Add(p.Id);
-            } else
-            {
-               
-                programIDS.Add(pPath,new List<int> {p.Id});
             }
-            
+            else
+            {
+
+                programIDS.Add(pPath, new List<int> { p.Id });
+            }
+
 
             //============================================================================
             //SHDocVw.ShellWindows shellWindows = new SHDocVw.ShellWindows();
@@ -347,13 +372,13 @@ namespace Boros2
                 }
                 else
                 {
-                    ss.SpeakAsync("Witch of the "+ programIDS[pPath].Count.ToString() +" would you like to close?");
+                    ss.SpeakAsync("Witch of the " + programIDS[pPath].Count.ToString() + " would you like to close?");
                     cProgramName = pPath;
                     choises = programIDS[pPath].Count;
                 }
             }
-            
-           
+
+
 
 
             //foreach (Process p in Process.GetProcessesByName("explorer"))
