@@ -30,7 +30,7 @@ namespace Boros2
 
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
-        bool hold = true;
+        bool hold = false;
         bool checkingSure = false;
         int choises = 0;
         string question, toClose, cProgramName;
@@ -43,8 +43,6 @@ namespace Boros2
             InitializeComponent();
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             updDictionarys();
-
-
 
             Grammar gr = new Grammar(new GrammarBuilder(clist));
 
@@ -62,7 +60,7 @@ namespace Boros2
                 MessageBox.Show(ex.Message, "Error");
             }
 
-            OpenExcelFile();
+            //OpenExcelFile();
         }
 
         public void OpenExcelFile()
@@ -87,7 +85,6 @@ namespace Boros2
             {
                 nums[i] = (i + 1).ToString();
                 //listBox1.Items.Add(nums[i]);
-
             }
             for (int i = 0; i < 10; i++)
             {
@@ -98,35 +95,28 @@ namespace Boros2
             string[] dirNamesOnly = holder.ToArray();
             clist.Add(nums);
             clist.Add(dirNamesOnly);
-            clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", "close chrome",
+            clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
                 "close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
         }
 
         private void ProcessDirectory(string dirPath)
         {
-
             string[] fileEntries = Directory.GetFiles(dirPath);
             //string[] files = new string[fileEntries.Count]; // hoeft niet
             foreach (string filePath in fileEntries)
             {
-
                 holder.Add("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
-
             }
 
             for (int i = 0; i < fileEntries.Length; i++)
             {
                 pathToName.Add(fileEntries[i], holder[i]); //maybe later open voor zetten
-
             }
-
 
             foreach (KeyValuePair<string, string> kp in pathToName)
             {
                 listBox1.Items.Add(kp.Key + " + " + kp.Value);
             }
-
-
         }
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -157,8 +147,6 @@ namespace Boros2
                         //    ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
                         //}
                     }
-
-
                 }
                 else
                 {
@@ -238,9 +226,9 @@ namespace Boros2
                                     //    break;
 
 
-                                    //case "open notepad":
-                                    //    OpenSomething("notepad", "notepad");
-                                    //    break;
+                                    case "open notepad":
+                                        OpenSomething("notepad", "notepad");
+                                       break;
                                     //case "close notepad":
                                     //    CloseSomething("notepad");
                                     //    break;
@@ -304,6 +292,7 @@ namespace Boros2
         {
 
             Process p = Process.Start(pPath);
+            
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");
             ss.SpeakAsync("Opening " + pName);

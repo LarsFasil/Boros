@@ -1,2 +1,20 @@
 functies:
 	- elke MAP op je bureaublad in te kunnen en ook daar alles te kunnen gebruiken
+
+	- Open songs on spotify
+
+	- operate elk programma
+		opzoeken of je daar api voor nodig hebt
+
+	- Stelt zelf vragen over wat je nodig hebt
+		neural net voor welke vragen die moet stellen
+			dingen die je het meest gebruikt
+		
+	- Memory van geleerde informatie
+		gebruiker specifiek
+	
+	- Volume controle
+
+Bezig met:
+	- Close functie afmaken
+	- shortcuts kunnen openen en bijbehorend process opslaan
