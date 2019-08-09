@@ -41,12 +41,18 @@ namespace Boros2
         public Form1()
         {
             InitializeComponent();
-            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
-            updDictionarys();
-
-            Grammar gr = new Grammar(new GrammarBuilder(clist));
+            InitializeVars();
+            //Setup first Speech recognition engine
+            NewSRE();
 
             ss.SpeakAsync("Hello, I am Boros");
+
+            //OpenExcelFile();
+        }
+
+        private void NewSRE()
+        {
+            Grammar gr = new Grammar(new GrammarBuilder(clist));
             try
             {
                 sre.RequestRecognizerUpdate();
@@ -59,28 +65,33 @@ namespace Boros2
             {
                 MessageBox.Show(ex.Message, "Error");
             }
+        }
 
-            //OpenExcelFile();
+        private void InitializeVars()
+        {
+            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
+            UpdDictionarys();
+
         }
 
         public void OpenExcelFile()
         {
             string excelPath = Directory.GetCurrentDirectory() + "\\CommandsList.xlsx";
             //MessageBox.Show(Directory.GetCurrentDirectory(), excelPath);
-            
+
             Excel excel = new Excel(@excelPath, 1);
             for (int i = 0; i < 4; i++)
             {
                 MessageBox.Show(excel.ReadCell(i, 0));
-                
+
             }
             excel.Close();
         }
 
 
-        private void updDictionarys()
+        private void UpdDictionarys()
         {
-
+            //Is dit nummers toevoegen?, moet beter
             for (int i = 0; i < nums.Length - 10; i++)
             {
                 nums[i] = (i + 1).ToString();
@@ -92,9 +103,8 @@ namespace Boros2
                 //listBox1.Items.Add(nums[i + (nums.Length - 10)]);
             }
 
-            string[] dirNamesOnly = holder.ToArray();
             clist.Add(nums);
-            clist.Add(dirNamesOnly);
+            clist.Add(holder.ToArray());
             clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
                 "close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
         }
@@ -228,7 +238,7 @@ namespace Boros2
 
                                     case "open notepad":
                                         OpenSomething("notepad", "notepad");
-                                       break;
+                                        break;
                                     //case "close notepad":
                                     //    CloseSomething("notepad");
                                     //    break;
@@ -243,6 +253,7 @@ namespace Boros2
                                         break;
                                     case "show log":
                                         ss.SpeakAsync("Showing Log");
+                                        this.WindowState = FormWindowState.Minimized;
                                         this.WindowState = FormWindowState.Maximized;
                                         break;
                                     case "hide log":
@@ -292,7 +303,7 @@ namespace Boros2
         {
 
             Process p = Process.Start(pPath);
-            
+
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");
             ss.SpeakAsync("Opening " + pName);
