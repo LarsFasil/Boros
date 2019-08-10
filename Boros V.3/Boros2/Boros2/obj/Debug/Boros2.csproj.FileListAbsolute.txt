@@ -32,3 +32,7 @@ C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.Propertie
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.csproj.GenerateResource.Cache
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.exe
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.pdb
+C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\CsvHelper.dll
+C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\System.ValueTuple.dll
+C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\CsvHelper.xml
+C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\System.ValueTuple.xml

@@ -18,3 +18,8 @@ functies:
 Bezig met:
 	- Close functie afmaken
 	- shortcuts kunnen openen en bijbehorend process opslaan
+	- Read functie csv Files
+
+TODO:
+	- Uninstall csvHelper
+	- 

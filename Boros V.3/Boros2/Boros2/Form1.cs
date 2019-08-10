@@ -13,8 +13,7 @@ using System.Speech;
 using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Threading;
-
-
+using CsvHelper;
 
 namespace Boros2
 {
@@ -36,7 +35,10 @@ namespace Boros2
         string question, toClose, cProgramName;
         Action<string> method;
 
-
+        //Open het excel bestand
+        //Excel excel = new Excel(Directory.GetCurrentDirectory() + "\\CommandsList.xlsx", 1);
+        CSV csv = new CSV();
+        
 
         public Form1()
         {
@@ -48,6 +50,11 @@ namespace Boros2
             ss.SpeakAsync("Hello, I am Boros");
 
             //OpenExcelFile();
+
+            //excel.WriteCell(0,0,"appel");
+            //MessageBox.Show(excel.ReadCell(0, 0));
+
+            
         }
 
         private void NewSRE()
@@ -74,19 +81,16 @@ namespace Boros2
 
         }
 
-        public void OpenExcelFile()
-        {
-            string excelPath = Directory.GetCurrentDirectory() + "\\CommandsList.xlsx";
-            //MessageBox.Show(Directory.GetCurrentDirectory(), excelPath);
+        //public void OpenExcelFile()
+        //{
+            
+        //    for (int i = 0; i < 4; i++)
+        //    {
+        //        MessageBox.Show(excel.ReadCell(i, 0));
 
-            Excel excel = new Excel(@excelPath, 1);
-            for (int i = 0; i < 4; i++)
-            {
-                MessageBox.Show(excel.ReadCell(i, 0));
-
-            }
-            excel.Close();
-        }
+        //    }
+        //    excel.Close();
+        //}
 
 
         private void UpdDictionarys()
@@ -113,8 +117,13 @@ namespace Boros2
         {
             string[] fileEntries = Directory.GetFiles(dirPath);
             //string[] files = new string[fileEntries.Count]; // hoeft niet
+
+            //fix assap
+            StringBuilder data = new StringBuilder();
             foreach (string filePath in fileEntries)
             {
+
+                data.AppendLine("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
                 holder.Add("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
             }
 
@@ -127,6 +136,7 @@ namespace Boros2
             {
                 listBox1.Items.Add(kp.Key + " + " + kp.Value);
             }
+            csv.UpdateData(data);
         }
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -265,6 +275,7 @@ namespace Boros2
                                         hold = true;
                                         break;
                                     case "exit":
+                                        csv.EndStream();
                                         Application.Exit();
                                         break;
                                 }
