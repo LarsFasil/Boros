@@ -59,58 +59,36 @@ namespace Boros2
     {
         
 
-        public string[] getData()
+        public string[] getData(string path)
         {
-            return File.ReadLines(@Directory.GetCurrentDirectory() + "\\Dict1.csv").ToArray();
+            if (!File.Exists(path))
+            {
+                //Create file and close the process right away
+                File.CreateText(path).Close();
+            }
+            return File.ReadLines(path).ToArray();
         }
 
-        //public void UpdateFile()
+    
+        public void UpdateData(string[] data, string path)
+        {
+             using (StreamWriter stream = File.CreateText(path))
+            {
+                foreach (var item in data)
+                {
+                    stream.WriteLine(item);
+                }
+                
+            }
+        }
+
+        //string GetPath()
         //{
-        //    string[][] output = new string[rowData.Count][];
-
-        //    for (int i = 0; i < output.Length; i++)
+        //    if (!Directory.Exists(@Directory.GetCurrentDirectory() + "\\Dict1") )
         //    {
-        //        output[i] = rowData[i];
+        //        Directory.CreateDirectory(@Directory.GetCurrentDirectory() + "\\Dict1");
         //    }
-
-        //    int length = output.GetLength(0);
-        //    string delimiter = ",";
-
-        //    StringBuilder sb = new StringBuilder();
-
-        //    for (int index = 0; index < length; index++)
-        //        sb.AppendLine(string.Join(delimiter, output[index]));
-
-        //    string s_filePath = GetPath();
-
-        //    StreamWriter outStream = System.IO.File.CreateText(s_filePath);
-        //    outStream.WriteLine(sb);
-        //    outStream.Close();
+        //    return @Directory.GetCurrentDirectory() + "\\Dict1.csv";
         //}
-        public void UpdateData(StringBuilder data)
-        {
-            //using (StreamWriter sr = new StreamWriter()
-            //{
-            //    sr.WriteLine(data);
-            //}
-
-            //StreamWriter outStream = File.CreateText(GetPath());
-            //    outStream.WriteLine(data);
-            //    outStream.Close();
-
-            using (var stream = File.CreateText(GetPath()))
-            {
-                stream.WriteLine(data);
-            }
-        }
-
-        string GetPath()
-        {
-            if (!Directory.Exists(@Directory.GetCurrentDirectory() + "\\Dict1") )
-            {
-                Directory.CreateDirectory(@Directory.GetCurrentDirectory() + "\\Dict1");
-            }
-            return @Directory.GetCurrentDirectory() + "\\Dict1.csv";
-        }
     }
 }

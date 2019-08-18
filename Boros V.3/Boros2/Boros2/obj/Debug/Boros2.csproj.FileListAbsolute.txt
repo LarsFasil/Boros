@@ -34,3 +34,4 @@ C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.exe
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Boros2.pdb
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\System.ValueTuple.dll
 C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\bin\Debug\System.ValueTuple.xml
+C:\Users\Lars\Documents\Boros\Boros V.3\Boros2\Boros2\obj\Debug\Interop.Shell32.dll

@@ -13,6 +13,7 @@ using System.Speech;
 using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Threading;
+using Shell32;
 
 namespace Boros2
 {
@@ -31,13 +32,14 @@ namespace Boros2
         bool hold = false;
         bool checkingSure = false;
         int choises = 0;
-        string question, toClose, cProgramName;
+        string question, toClose, cProgramName, path_Commands, path_Dict;
         Action<string> method;
 
         //Open het excel bestand
         //Excel excel = new Excel(Directory.GetCurrentDirectory() + "\\CommandsList.xlsx", 1);
         CSV csv = new CSV();
-        
+        //string[] sa_data;
+
 
         public Form1()
         {
@@ -48,7 +50,7 @@ namespace Boros2
 
             ss.SpeakAsync("Hello, I am Boros");
             //MessageBox.Show(csv.getData());
-            
+
         }
 
         private void NewSRE()
@@ -70,22 +72,13 @@ namespace Boros2
 
         private void InitializeVars()
         {
-            //ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
+            path_Commands = @Directory.GetCurrentDirectory() + "\\Commands.csv";
+            path_Dict = @Directory.GetCurrentDirectory() + "\\Dictionary.csv";
+
+            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
         }
-
-        //public void OpenExcelFile()
-        //{
-            
-        //    for (int i = 0; i < 4; i++)
-        //    {
-        //        MessageBox.Show(excel.ReadCell(i, 0));
-
-        //    }
-        //    excel.Close();
-        //}
-
 
         private void UpdDictionarys()
         {
@@ -103,9 +96,10 @@ namespace Boros2
 
             clist.Add(nums);
             //clist.Add(holder.ToArray());
-            clist.Add(csv.getData());
+            clist.Add(csv.getData(path_Commands));
+            clist.Add(csv.getData(path_Dict));
             //clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
-                //"close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
+            //"close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
         }
 
         private void ProcessDirectory(string dirPath)
@@ -114,24 +108,28 @@ namespace Boros2
             //string[] files = new string[fileEntries.Count]; // hoeft niet
 
             //fix assap
-            StringBuilder data = new StringBuilder();
+            string[] sa_data = new string[fileEntries.Length];
+            int z = 0;
             foreach (string filePath in fileEntries)
             {
 
-                data.AppendLine("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
-                holder.Add("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
+                sa_data[z] = "open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", "");
+                //data.AppendLine("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
+                z++;
             }
+
 
             for (int i = 0; i < fileEntries.Length; i++)
             {
-                pathToName.Add(fileEntries[i], holder[i]); //maybe later open voor zetten
+                pathToName.Add(fileEntries[i], sa_data[i]); //maybe later open voor zetten
             }
 
             foreach (KeyValuePair<string, string> kp in pathToName)
             {
                 listBox1.Items.Add(kp.Key + " + " + kp.Value);
             }
-            csv.UpdateData(data);
+
+            csv.UpdateData(sa_data, path_Dict);
         }
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -290,25 +288,48 @@ namespace Boros2
             }
 
         }
+        public static string GetShortcutTargetFile(string shortcutFilename)
+        {
+            string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
+            string filenameOnly = System.IO.Path.GetFileName(shortcutFilename);
 
+            Shell shell = new Shell();
+            Folder folder = shell.NameSpace(pathOnly);
+            FolderItem folderItem = folder.ParseName(filenameOnly);
+            if (folderItem != null)
+            {
+                Shell32.ShellLinkObject link = (Shell32.ShellLinkObject)folderItem.GetLink;
+                return link.Path;
+            }
+
+            return string.Empty;
+        }
 
 
         void test()
         {
-            CloseSomething(@"C:\Users\Lars\Desktop\telegram.lnk");
-            //Process.Start();                             Werkt
-            //Process.Start();                                                              
-            //OpenSomething(@"C:\Users\Lars\AppData\Roaming\Telegram Desktop\Telegram");
-
-            //nums[21]
-            //listBox1.Items.Add(programIDS["notepad"].Count);
-            //listBox1.Items.Add(programIDS["chrome"][0]);
+            Process p = new Process();
+            p.StartInfo.FileName = @"C:\Program Files\PureRef\PureRef.exe";
+            p.Start();
         }
 
         void OpenSomething(string pPath, string pName)
         {
+            Process p;
+            if (pPath.Contains(".lnk"))
+            {
+                string RealPath = GetShortcutTargetFile(pPath);
+                if (RealPath.Contains(" (x86)"))
+                {
+                    RealPath = RealPath.Replace(" (x86)", "");
+                }
+                p = Process.Start(RealPath);
+            }
+            else
+            {
+                p = Process.Start(pPath);
+            }
 
-            Process p = Process.Start(pPath);
 
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");
