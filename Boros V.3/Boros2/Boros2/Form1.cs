@@ -13,7 +13,6 @@ using System.Speech;
 using System.Speech.Synthesis;
 using System.Speech.Recognition;
 using System.Threading;
-using CsvHelper;
 
 namespace Boros2
 {
@@ -48,12 +47,7 @@ namespace Boros2
             NewSRE();
 
             ss.SpeakAsync("Hello, I am Boros");
-
-            //OpenExcelFile();
-
-            //excel.WriteCell(0,0,"appel");
-            //MessageBox.Show(excel.ReadCell(0, 0));
-
+            //MessageBox.Show(csv.getData());
             
         }
 
@@ -76,7 +70,7 @@ namespace Boros2
 
         private void InitializeVars()
         {
-            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
+            //ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
         }
@@ -108,9 +102,10 @@ namespace Boros2
             }
 
             clist.Add(nums);
-            clist.Add(holder.ToArray());
-            clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
-                "close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
+            //clist.Add(holder.ToArray());
+            clist.Add(csv.getData());
+            //clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
+                //"close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
         }
 
         private void ProcessDirectory(string dirPath)
@@ -275,7 +270,7 @@ namespace Boros2
                                         hold = true;
                                         break;
                                     case "exit":
-                                        csv.EndStream();
+                                        //csv.EndStream();
                                         Application.Exit();
                                         break;
                                 }

@@ -57,16 +57,11 @@ namespace Boros2
     }
     class CSV
     {
-        StreamWriter outStream = File.CreateText(Directory.GetCurrentDirectory()+"\\dict1.csv");
+        
 
-        public void UpdateData(StringBuilder data)
+        public string[] getData()
         {
-            outStream.WriteLine(data);
-        }
-
-        public void EndStream()
-        {
-            outStream.Close();
+            return File.ReadLines(@Directory.GetCurrentDirectory() + "\\Dict1.csv").ToArray();
         }
 
         //public void UpdateFile()
@@ -92,6 +87,22 @@ namespace Boros2
         //    outStream.WriteLine(sb);
         //    outStream.Close();
         //}
+        public void UpdateData(StringBuilder data)
+        {
+            //using (StreamWriter sr = new StreamWriter()
+            //{
+            //    sr.WriteLine(data);
+            //}
+
+            //StreamWriter outStream = File.CreateText(GetPath());
+            //    outStream.WriteLine(data);
+            //    outStream.Close();
+
+            using (var stream = File.CreateText(GetPath()))
+            {
+                stream.WriteLine(data);
+            }
+        }
 
         string GetPath()
         {
@@ -99,7 +110,7 @@ namespace Boros2
             {
                 Directory.CreateDirectory(@Directory.GetCurrentDirectory() + "\\Dict1");
             }
-            return Directory.GetCurrentDirectory() + "\\Dict1";
+            return @Directory.GetCurrentDirectory() + "\\Dict1.csv";
         }
     }
 }

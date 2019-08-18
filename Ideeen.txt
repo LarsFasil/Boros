@@ -19,6 +19,9 @@ Bezig met:
 	- Close functie afmaken
 	- shortcuts kunnen openen en bijbehorend process opslaan
 	- Read functie csv Files
+	- Muis controlle, Mousecontrol on, sprongen van x pixels
+	- toetsenbord: enter,tab
+	- google iets
 
 TODO:
 	- Uninstall csvHelper
