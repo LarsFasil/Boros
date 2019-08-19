@@ -265,7 +265,7 @@ namespace Boros2
                                     case "show log":
                                         ss.SpeakAsync("Showing Log");
                                         this.WindowState = FormWindowState.Minimized;
-                                        this.WindowState = FormWindowState.Maximized;
+                                        this.WindowState = FormWindowState.Normal;
                                         break;
                                     case "hide log":
                                         ss.SpeakAsync("Hiding Log");
