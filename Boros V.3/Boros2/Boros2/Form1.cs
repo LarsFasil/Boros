@@ -126,7 +126,7 @@ namespace Boros2
 
             foreach (KeyValuePair<string, string> kp in pathToName)
             {
-                listBox1.Items.Add(kp.Key + " + " + kp.Value);
+                listBox1.Items.Add(kp.Value.Replace("open ",""));
             }
 
             csv.UpdateData(sa_data, path_Dict);
@@ -192,7 +192,15 @@ namespace Boros2
                         {
                             if (e.Result.Text.ToString().Contains("close"))
                             {
-                                // manier van close en open veranderen in 2 aparte delen. net als choises
+                                foreach (var kp in pathToName)
+                                {
+                                    if (e.Result.Text.ToString() == kp.Value.Replace("open","close"))
+                                    {
+                                        CloseSomething(kp.Key);
+                                    }
+                                }
+                                
+
                             }
                             else
                             {
@@ -334,6 +342,12 @@ namespace Boros2
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");
             ss.SpeakAsync("Opening " + pName);
+
+            clist.Add("close "+pName);
+            sre.Dispose();
+            sre = new SpeechRecognitionEngine();
+            NewSRE();
+
             if (programIDS.ContainsKey(pPath))
             {
 

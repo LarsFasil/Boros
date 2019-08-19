@@ -15,6 +15,7 @@ functies:
 	
 	- Volume controle
 
+
 Bezig met:
 	- Close functie afmaken
 	- shortcuts kunnen openen en bijbehorend process opslaan
@@ -23,6 +24,6 @@ Bezig met:
 	- toetsenbord: enter,tab
 	- google iets
 
-TODO:
-	- Uninstall csvHelper
+TODO:	- refactor alles
+	- Opmaak box https://www.youtube.com/watch?v=kY9ov0WnSZs
 	- 
