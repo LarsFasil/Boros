@@ -321,6 +321,32 @@ namespace Boros2
             p.Start();
         }
 
+        bool drag = false;
+        int Mx, My;
+
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            drag = true;
+            Mx = Cursor.Position.X - this.Left;
+            My = Cursor.Position.Y - this.Top;
+        }
+
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (drag)
+            {
+                Top = Cursor.Position.Y - My;
+                Left = Cursor.Position.X - Mx;
+            }
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            drag = false;
+        }
+
+        
+
         void OpenSomething(string pPath, string pName)
         {
             Process p;
