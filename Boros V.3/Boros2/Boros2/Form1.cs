@@ -34,11 +34,12 @@ namespace Boros2
         int choises = 0;
         string question, toClose, cProgramName, path_Commands, path_Dict;
         Action<string> method;
+        int pixelJump;
 
-        //Open het excel bestand
-        //Excel excel = new Excel(Directory.GetCurrentDirectory() + "\\CommandsList.xlsx", 1);
+      
         CSV csv = new CSV();
-        //string[] sa_data;
+        Cursor_Keyboard ck = new Cursor_Keyboard();
+
 
 
         public Form1()
@@ -78,6 +79,7 @@ namespace Boros2
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
+            pixelJump = 80;
         }
 
         private void UpdDictionarys()
@@ -126,7 +128,7 @@ namespace Boros2
 
             foreach (KeyValuePair<string, string> kp in pathToName)
             {
-                listBox1.Items.Add(kp.Value.Replace("open ",""));
+                listBox1.Items.Add(kp.Value.Replace("open ", ""));
             }
 
             csv.UpdateData(sa_data, path_Dict);
@@ -194,12 +196,12 @@ namespace Boros2
                             {
                                 foreach (var kp in pathToName)
                                 {
-                                    if (e.Result.Text.ToString() == kp.Value.Replace("open","close"))
+                                    if (e.Result.Text.ToString() == kp.Value.Replace("open", "close"))
                                     {
                                         CloseSomething(kp.Key);
                                     }
                                 }
-                                
+
 
                             }
                             else
@@ -275,6 +277,30 @@ namespace Boros2
                                         ss.SpeakAsync("On Hold");
                                         hold = true;
                                         break;
+
+                                    case "left":
+                                        ck.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
+                                        break;
+                                    case "right":
+                                        ck.CursorMove(Cursor_Keyboard.dirct.right, pixelJump);
+                                        break;
+                                    case "up":
+                                        ck.CursorMove(Cursor_Keyboard.dirct.up, pixelJump);
+                                        break;
+                                    case "down":
+                                        ck.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
+                                        break;
+
+                                    case "click":
+                                        ck.ckEvent(Cursor_Keyboard.ck_event.click);
+                                        break;
+                                    case "back":
+                                        ck.ckEvent(Cursor_Keyboard.ck_event.back);
+                                        break;
+                                    case "enter":
+                                        ck.ckEvent(Cursor_Keyboard.ck_event.enter);
+                                        break;
+
                                     case "exit":
                                         //csv.EndStream();
                                         Application.Exit();
@@ -316,9 +342,7 @@ namespace Boros2
 
         void test()
         {
-            Process p = new Process();
-            p.StartInfo.FileName = @"C:\Program Files\PureRef\PureRef.exe";
-            p.Start();
+
         }
 
         bool drag = false;
@@ -345,7 +369,7 @@ namespace Boros2
             drag = false;
         }
 
-        
+
 
         void OpenSomething(string pPath, string pName)
         {
@@ -369,7 +393,7 @@ namespace Boros2
             pName = pName.Replace("open ", "");
             ss.SpeakAsync("Opening " + pName);
 
-            clist.Add("close "+pName);
+            clist.Add("close " + pName);
             sre.Dispose();
             sre = new SpeechRecognitionEngine();
             NewSRE();

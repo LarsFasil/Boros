@@ -26,4 +26,4 @@ Bezig met:
 
 TODO:	- refactor alles
 	- Opmaak box https://www.youtube.com/watch?v=kY9ov0WnSZs
-	- 
+	- spy++ researchen
