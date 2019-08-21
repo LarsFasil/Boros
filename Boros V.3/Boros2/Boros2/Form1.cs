@@ -33,7 +33,8 @@ namespace Boros2
         bool checkingSure = false;
         int choises = 0;
         string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
-        Action<string> method;
+        Action method1;
+        Action<Enum> method2;
         int pixelJump;
 
 
@@ -136,7 +137,15 @@ namespace Boros2
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            string result = e.Result.Text.ToString();
+            ProcesSpeech(e.Result.Text.ToString());
+        }
+
+        void ProcesSpeech(string result)
+        {
+            if (result != "no")
+            {
+                prevCommand = result;
+            }
 
             if (hold)
             {
@@ -172,21 +181,27 @@ namespace Boros2
 
             if (checkingSure)
             {
-
                 if (result == "yes")
                 {
-                    method(toClose);
-                    result = "no";
-                }
-                if (result != "no")
-                {
-                    ss.SpeakAsync("please say yes or no");
-                    MakeSure();
+                    if (method1 != null)
+                    {
+                        method1();
+                    }
+                    else
+                    {
+                        //method2();
+                    }
+                    checkingSure = false;
                     return;
                 }
+                if (result == "no")
+                {
+                    ss.SpeakAsync("ok, we will not " + prevCommand);
 
-                checkingSure = false;
-
+                    checkingSure = false;
+                    return;
+                }
+                ss.SpeakAsync("please say yes or no");
                 return;
             }
 
@@ -291,8 +306,8 @@ namespace Boros2
                     break;
 
                 case "exit":
-                    //csv.EndStream();
-                    Application.Exit();
+                    MakeSure(Application.Exit);
+
                     break;
             }
 
@@ -405,9 +420,18 @@ namespace Boros2
             //}
         }
 
-        void MakeSure()
+        void MakeSure(Action<Enum> action)
         {
             ss.SpeakAsync("are you sure you want to" + prevCommand);
+            method2 = action;
+            method1 = null;
+            checkingSure = true;
+        }
+        void MakeSure(Action action)
+        {
+            ss.SpeakAsync("are you sure you want to" + prevCommand);
+            method1 = action;
+            method2 = null;
             checkingSure = true;
         }
 

@@ -25,14 +25,16 @@ functies:
 		- cursor control off
 		- scroll up/down
 	- dictionaries toggelen wanneer ze nodig zijn zoals bij nums
-
-Bezig met:
+	- toetsenbord: enter
+	- google iets
+	- Read functie csv Files
 	- Close functie afmaken
 	- shortcuts kunnen openen en bijbehorend process opslaan
-	- Read functie csv Files
+
+Bezig met:
 	- Muis controlle, Mousecontrol on, sprongen van x pixels
-	- toetsenbord: enter,tab
-	- google iets
+	- makesure/confirm met parameter
+
 
 TODO:	- refactor alles
 	- spy++ researchen
