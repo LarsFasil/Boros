@@ -22,6 +22,7 @@ namespace Boros2
         public enum dirct { left, right, up, down };
         public enum ck_event { click, enter, back };
 
+
         public void CursorMove(dirct x, int pxl)
         {
             Point p = new Point();
@@ -58,6 +59,15 @@ namespace Boros2
                     SendKeys.Send("%{LEFT}");
                     break;
             }
+        }
+
+        public void Audio(int volume)
+        {
+            AudioManager.SetMasterVolume(volume);
+        }
+        public void Audio(bool mute)
+        { 
+            AudioManager.ToggleMasterVolumeMute();
         }
 
         void DoMouseClick()

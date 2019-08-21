@@ -15,6 +15,16 @@ functies:
 	
 	- Volume controle
 
+	- get current open window, om te minimizen
+
+	- cursor control mode
+		-set sensitivity
+			-x
+		-left
+		-up, ect..
+		- cursor control off
+		- scroll up/down
+	- dictionaries toggelen wanneer ze nodig zijn zoals bij nums
 
 Bezig met:
 	- Close functie afmaken
@@ -25,5 +35,4 @@ Bezig met:
 	- google iets
 
 TODO:	- refactor alles
-	- Opmaak box https://www.youtube.com/watch?v=kY9ov0WnSZs
 	- spy++ researchen

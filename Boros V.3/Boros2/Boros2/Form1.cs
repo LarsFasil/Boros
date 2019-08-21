@@ -32,11 +32,11 @@ namespace Boros2
         bool hold = false;
         bool checkingSure = false;
         int choises = 0;
-        string question, toClose, cProgramName, path_Commands, path_Dict;
+        string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
         Action<string> method;
         int pixelJump;
 
-      
+
         CSV csv = new CSV();
         Cursor_Keyboard ck = new Cursor_Keyboard();
 
@@ -136,192 +136,169 @@ namespace Boros2
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
+            string result = e.Result.Text.ToString();
+
             if (hold)
             {
-                if (e.Result.Text.ToString() == "borrows respond")
+                if (result != "borrows respond")
                 {
-                    hold = false;
-                    ss.SpeakAsync("Yes?");
-                    listBox1.Items.Add("free to talk");
+                    return;
                 }
+                hold = false;
+                ss.SpeakAsync("Yes?");
+                listBox1.Items.Add("free to talk");
             }
-            else
+
+            if (choises > 0)
             {
-                if (choises != 0)
+                if (result == "nevermind")
                 {
-                    for (int i = 0; i < choises; i++)
+                    choises = 0;
+                    return;
+                }
+                for (int i = 0; i < choises; i++)
+                {
+                    if (result == nums[i])
                     {
-                        if (e.Result.Text.ToString() == nums[i])
-                        {
-                            ss.SpeakAsync("you chose number " + nums[i]);
-                            CloseChoise(i);
-                            choises = 0;
-                        }
-                        //else
-                        //{
-                        //    ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
-                        //}
+                        ss.SpeakAsync("you chose number " + nums[i]);
+                        CloseChoise(i);
+                        choises = 0;
+                        return;
                     }
                 }
-                else
-                {
-                    if (checkingSure)
-                    {
-
-                        if (e.Result.Text.ToString() == "yes")
-                        {
-                            ss.SpeakAsync(question);
-                            method(toClose);
-                        }
-                        else { ss.SpeakAsync("Ok"); }
-
-                        checkingSure = false;
-                    }
-                    else
-                    {
-                        if (e.Result.Text.ToString().Contains("open"))
-                        {
-                            listBox1.Items.Add("open caught");
-                            foreach (KeyValuePair<string, string> kp in pathToName)
-                            {
-                                if (e.Result.Text.ToString() == kp.Value)
-                                {
-                                    OpenSomething(kp.Key, kp.Value);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (e.Result.Text.ToString().Contains("close"))
-                            {
-                                foreach (var kp in pathToName)
-                                {
-                                    if (e.Result.Text.ToString() == kp.Value.Replace("open", "close"))
-                                    {
-                                        CloseSomething(kp.Key);
-                                    }
-                                }
-
-
-                            }
-                            else
-                            {
-
-                                switch (e.Result.Text.ToString())
-                                {
-
-                                    case "borrows":
-                                        ss.SpeakAsync("Yes?");
-                                        break;
-                                    case "21":
-                                        ss.SpeakAsync("Hi lars");
-                                        break;
-                                    case "how are you":
-                                        ss.SpeakAsync("fine how are you?");
-                                        break;
-                                    case "what time is it":
-                                        ss.SpeakAsync("The time is" + DateTime.Now.ToLongTimeString());
-                                        break;
-                                    //case "open chrome":
-                                    //    //ss.SpeakAsync("Starting Chrome");
-                                    //    //Process.Start("chrome");
-                                    //    OpenSomething("chrome");
-                                    //    break;
-                                    //case "close chrome":
-
-                                    //    ss.Speak("Are you sure?");
-                                    //    question = "Closing all windows off Chrome";
-
-                                    //    method = CloseSomething;
-                                    //    toClose = "chrome";
-                                    //    checkingSure = true;
-
-
-                                    //    break;
-                                    //case "open music":
-                                    //    //ss.SpeakAsync("Opening music");
-                                    //    //Process.Start(@"E:\4.muziek\yt");
-                                    //    OpenSomething(@"E:\4.muziek\yt");
-                                    //    break;
-                                    //case "close music":
-                                    //    ss.SpeakAsync("Closing music");
-                                    //    CloseSomething(@"E:\4.muziek\yt");
-                                    //    break;
-
-
-                                    case "open notepad":
-                                        OpenSomething("notepad", "notepad");
-                                        break;
-                                    //case "close notepad":
-                                    //    CloseSomething("notepad");
-                                    //    break;
-
-                                    case "test":
-                                        test();
-                                        break;
-
-                                    case "clear log":
-                                        ss.SpeakAsync("Log cleared");
-                                        listBox1.Items.Clear();
-                                        break;
-                                    case "show log":
-                                        ss.SpeakAsync("Showing Log");
-                                        this.WindowState = FormWindowState.Minimized;
-                                        this.WindowState = FormWindowState.Normal;
-                                        break;
-                                    case "hide log":
-                                        ss.SpeakAsync("Hiding Log");
-                                        this.WindowState = FormWindowState.Minimized;
-                                        break;
-                                    case "shut up please":
-                                        ss.SpeakAsync("On Hold");
-                                        hold = true;
-                                        break;
-
-                                    case "left":
-                                        ck.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
-                                        break;
-                                    case "right":
-                                        ck.CursorMove(Cursor_Keyboard.dirct.right, pixelJump);
-                                        break;
-                                    case "up":
-                                        ck.CursorMove(Cursor_Keyboard.dirct.up, pixelJump);
-                                        break;
-                                    case "down":
-                                        ck.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
-                                        break;
-
-                                    case "click":
-                                        ck.ckEvent(Cursor_Keyboard.ck_event.click);
-                                        break;
-                                    case "back":
-                                        ck.ckEvent(Cursor_Keyboard.ck_event.back);
-                                        break;
-                                    case "enter":
-                                        ck.ckEvent(Cursor_Keyboard.ck_event.enter);
-                                        break;
-
-                                    case "exit":
-                                        //csv.EndStream();
-                                        Application.Exit();
-                                        break;
-                                }
-                            }
-                        }
-
-
-                    }
-                }
-
-
-
-
-
-
-                listBox1.Items.Add(e.Result.Text.ToString());
+                ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
+                return;
             }
 
+            if (checkingSure)
+            {
+
+                if (result == "yes")
+                {
+                    method(toClose);
+                    result = "no";
+                }
+                if (result != "no")
+                {
+                    ss.SpeakAsync("please say yes or no");
+                    MakeSure();
+                    return;
+                }
+
+                checkingSure = false;
+
+                return;
+            }
+
+            if (result.Contains("open"))
+            {
+                foreach (KeyValuePair<string, string> kp in pathToName)
+                {
+                    if (result == kp.Value)
+                    {
+                        OpenSomething(kp.Key, kp.Value);
+                        return;
+                    }
+                }
+                ss.SpeakAsync("could not find that name in dictionary");
+                return;
+            }
+
+            if (result.Contains("close"))
+            {
+                foreach (var kp in pathToName)
+                {
+                    if (result == kp.Value.Replace("open", "close"))
+                    {
+                        CloseSomething(kp.Key);
+                        return;
+                    }
+                }
+                ss.SpeakAsync("could not find that name in dictionary");
+                return;
+            }
+
+            switch (result)
+            {
+
+                case "borrows":
+                    ss.SpeakAsync("Yes?");
+                    break;
+                case "21":
+                    ss.SpeakAsync("Hi lars");
+                    break;
+
+                case "what time is it":
+                    ss.SpeakAsync("The time is" + DateTime.Now.ToLongTimeString());
+                    break;
+
+
+                case "open notepad":
+                    OpenSomething("notepad", "notepad");
+                    break;
+
+
+                case "test":
+                    test();
+                    break;
+
+                case "clear log":
+                    ss.SpeakAsync("Log cleared");
+                    listBox1.Items.Clear();
+                    break;
+                case "show log":
+                    ss.SpeakAsync("Showing Log");
+                    this.WindowState = FormWindowState.Minimized;
+                    this.WindowState = FormWindowState.Normal;
+                    break;
+                case "hide log":
+                    ss.SpeakAsync("Hiding Log");
+                    this.WindowState = FormWindowState.Minimized;
+                    break;
+                case "shut up":
+                    ss.SpeakAsync("On Hold");
+                    hold = true;
+                    break;
+
+                case "left":
+                    ck.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
+                    break;
+                case "right":
+                    ck.CursorMove(Cursor_Keyboard.dirct.right, pixelJump);
+                    break;
+                case "up":
+                    ck.CursorMove(Cursor_Keyboard.dirct.up, pixelJump);
+                    break;
+                case "down":
+                    ck.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
+                    break;
+
+                case "click":
+                    ck.ckEvent(Cursor_Keyboard.ck_event.click);
+                    break;
+                case "back":
+                    ck.ckEvent(Cursor_Keyboard.ck_event.back);
+                    break;
+                case "enter":
+                    ck.ckEvent(Cursor_Keyboard.ck_event.enter);
+                    break;
+
+                case "volume":
+                    ck.Audio(50);
+                    break;
+                case "mute":
+                    ck.Audio(true);
+                    break;
+
+                case "exit":
+                    //csv.EndStream();
+                    Application.Exit();
+                    break;
+            }
+
+            listBox1.Items.Add(result);
         }
+
         public static string GetShortcutTargetFile(string shortcutFilename)
         {
             string pathOnly = System.IO.Path.GetDirectoryName(shortcutFilename);
@@ -426,6 +403,12 @@ namespace Boros2
             //        MessageBox.Show(ie.HWND.ToString());
             //    }
             //}
+        }
+
+        void MakeSure()
+        {
+            ss.SpeakAsync("are you sure you want to" + prevCommand);
+            checkingSure = true;
         }
 
 
