@@ -20,10 +20,10 @@ namespace Boros2
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
         public enum dirct { left, right, up, down };
-        public enum ck_event { click, enter, back };
+        public enum EnumOptions { click, enter, back, Null };
 
 
-        public void CursorMove(dirct x, int pxl)
+        public static void CursorMove(dirct x, int pxl)
         {
             Point p = new Point();
             switch (x)
@@ -44,33 +44,33 @@ namespace Boros2
             Cursor.Position = p;
         }
 
-        public void ckEvent(ck_event x)
+        public static void ckEvent(EnumOptions x)
         {
             switch (x)
             {
-                case ck_event.click:
+                case EnumOptions.click:
                     DoMouseClick();
                     break;
-                case ck_event.enter:
+                case EnumOptions.enter:
                     SendKeys.Send("{ENTER}");
                     break;
-                case ck_event.back:
+                case EnumOptions.back:
                     //% = ALT, LEFT = left arrowkey
                     SendKeys.Send("%{LEFT}");
                     break;
             }
         }
 
-        public void Audio(int volume)
+        public static void Audio(int volume)
         {
             AudioManager.SetMasterVolume(volume);
         }
-        public void Audio(bool mute)
+        public static void Audio(bool mute)
         { 
             AudioManager.ToggleMasterVolumeMute();
         }
 
-        void DoMouseClick()
+        static void DoMouseClick()
         {
             //Call the imported function with the cursor's current position
             int X = Cursor.Position.X;

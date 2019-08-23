@@ -33,18 +33,25 @@ namespace Boros2
         bool checkingSure = false;
         int choises = 0;
         string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
-        Action method1;
-        Action<Enum> method2;
+
+        Action<bool> method1;
+        Action<Cursor_Keyboard.EnumOptions> method2;
+        Action<int> method3;
+        Action method4;
+
+        bool param1;
+        Cursor_Keyboard.EnumOptions param2;
+        int param3;
+
         int pixelJump;
 
 
         CSV csv = new CSV();
-        Cursor_Keyboard ck = new Cursor_Keyboard();
-
 
 
         public Form1()
         {
+
             InitializeComponent();
             InitializeVars();
             //Setup first Speech recognition engine
@@ -185,11 +192,19 @@ namespace Boros2
                 {
                     if (method1 != null)
                     {
-                        method1();
+                        method1(param1);
                     }
-                    else
+                    if (method2 != null)
                     {
-                        //method2();
+                        method2(param2);
+                    }
+                    if (method3 != null)
+                    {
+                        method3(param3);
+                    }
+                    if (method4 != null)
+                    {
+                        method4();
                     }
                     checkingSure = false;
                     return;
@@ -202,6 +217,7 @@ namespace Boros2
                     return;
                 }
                 ss.SpeakAsync("please say yes or no");
+                ss.SpeakAsync("Would you like to " + prevCommand);
                 return;
             }
 
@@ -276,38 +292,37 @@ namespace Boros2
                     break;
 
                 case "left":
-                    ck.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
+                    Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
                     break;
                 case "right":
-                    ck.CursorMove(Cursor_Keyboard.dirct.right, pixelJump);
+                    Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.right, pixelJump);
                     break;
                 case "up":
-                    ck.CursorMove(Cursor_Keyboard.dirct.up, pixelJump);
+                    Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.up, pixelJump);
                     break;
                 case "down":
-                    ck.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
+                    Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
                     break;
 
                 case "click":
-                    ck.ckEvent(Cursor_Keyboard.ck_event.click);
+                    Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.click);
                     break;
                 case "back":
-                    ck.ckEvent(Cursor_Keyboard.ck_event.back);
+                    Confirm(Cursor_Keyboard.ckEvent,Cursor_Keyboard.EnumOptions.back);
                     break;
                 case "enter":
-                    ck.ckEvent(Cursor_Keyboard.ck_event.enter);
+                    Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
 
                 case "volume":
-                    ck.Audio(50);
+                    Cursor_Keyboard.Audio(50);
                     break;
                 case "mute":
-                    ck.Audio(true);
+                    Cursor_Keyboard.Audio(true);
                     break;
 
                 case "exit":
-                    MakeSure(Application.Exit);
-
+                    Confirm(Application.Exit);
                     break;
             }
 
@@ -420,18 +435,37 @@ namespace Boros2
             //}
         }
 
-        void MakeSure(Action<Enum> action)
+
+        void Confirm(Action<bool> action, bool param)
         {
-            ss.SpeakAsync("are you sure you want to" + prevCommand);
-            method2 = action;
-            method1 = null;
-            checkingSure = true;
-        }
-        void MakeSure(Action action)
-        {
-            ss.SpeakAsync("are you sure you want to" + prevCommand);
+            resetMethods();
             method1 = action;
+            param1 = param;
+        }
+        void Confirm(Action<Cursor_Keyboard.EnumOptions> action, Cursor_Keyboard.EnumOptions param)
+        {
+            resetMethods();
+            method2 = action;
+            param2 = param;
+        }
+        void Confirm(Action<int> action, int param)
+        {
+            resetMethods();
+            method3 = action;
+            param3 = param;
+        }
+        void Confirm(Action action)
+        {
+            resetMethods();
+            method4 = action;
+        }
+        void resetMethods()
+        {
+            ss.SpeakAsync("are you sure you want to" + prevCommand);
+            method1 = null;
             method2 = null;
+            method3 = null;
+            method4 = null;
             checkingSure = true;
         }
 
