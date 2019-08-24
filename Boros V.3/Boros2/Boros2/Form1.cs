@@ -30,8 +30,8 @@ namespace Boros2
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
         bool hold = false;
-        bool checkingSure = false;
-        int choises = 0;
+        bool checkingSure;
+        int choises;
         string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
 
         Action<bool> method1;
@@ -43,6 +43,8 @@ namespace Boros2
         Cursor_Keyboard.EnumOptions param2;
         int param3;
 
+        enum Mode { Normal, Cursor, Audio };
+        Mode mode;
         int pixelJump;
 
 
@@ -87,6 +89,9 @@ namespace Boros2
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
+            choises = 0;
+            checkingSure = false;
+            mode = Mode.Normal;
             pixelJump = 80;
         }
 
@@ -144,10 +149,31 @@ namespace Boros2
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            ProcesSpeech(e.Result.Text.ToString());
+            modeSelect(e.Result.Text.ToString());
         }
 
-        void ProcesSpeech(string result)
+        void modeSelect(string result)
+        {
+            listBox1.Items.Add(result);
+            if (CommonResults(result))
+            {
+                return;
+            }
+            switch (mode)
+            {
+                case Mode.Normal:
+                    NormalMode(result);
+                    break;
+                case Mode.Cursor:
+                    CursorMode(result);
+                    break;
+                case Mode.Audio:
+                    AudioMode(result);
+                    break;
+            }
+        }
+
+        void NormalMode(string result)
         {
             if (result != "no")
             {
@@ -163,6 +189,7 @@ namespace Boros2
                 hold = false;
                 ss.SpeakAsync("Yes?");
                 listBox1.Items.Add("free to talk");
+                return;
             }
 
             if (choises > 0)
@@ -290,7 +317,13 @@ namespace Boros2
                     ss.SpeakAsync("On Hold");
                     hold = true;
                     break;
+            }
+        }
 
+        void CursorMode(string result)
+        {
+            switch (result)
+            {
                 case "left":
                     Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.left, pixelJump);
                     break;
@@ -308,25 +341,73 @@ namespace Boros2
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.click);
                     break;
                 case "back":
-                    Confirm(Cursor_Keyboard.ckEvent,Cursor_Keyboard.EnumOptions.back);
+                    Confirm(Cursor_Keyboard.ckEvent, Cursor_Keyboard.EnumOptions.back);
                     break;
                 case "enter":
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
-
-                case "volume":
-                    Cursor_Keyboard.Audio(50);
-                    break;
+            }
+        }
+        void AudioMode(string result)
+        {
+            switch (result)
+            {
                 case "mute":
                     Cursor_Keyboard.Audio(true);
                     break;
+                case "volume":
+                    Cursor_Keyboard.Audio(50);
+                    break;
+            }
+        }
 
+        bool CommonResults(string result)
+        {
+            bool x = true;
+            switch (result)
+            {
+                case "audio mode":
+                    if (mode != Mode.Audio)
+                    {
+                        mode = Mode.Audio;
+                        ss.SpeakAsync("Audio Mode on");
+                    }
+                    else
+                    {
+                        ss.SpeakAsync("Audio Mode is already on");
+                    }
+                    break;
+                case "cursor mode":
+                    if (mode != Mode.Cursor)
+                    {
+                        mode = Mode.Cursor;
+                        ss.SpeakAsync("Cursor Mode on");
+                    }
+                    else
+                    {
+                        ss.SpeakAsync("Cursor Mode is already on");
+                    }
+                    break;
+                case "normal mode":
+                    if (mode != Mode.Normal)
+                    {
+                        mode = Mode.Normal;
+                        ss.SpeakAsync("Normal Mode on");
+                    }
+                    else
+                    {
+                        ss.SpeakAsync("Normal Mode is already on");
+                    }
+                    break;
                 case "exit":
                     Confirm(Application.Exit);
                     break;
+                default:
+                    x = false;
+                    break;
             }
+            return x;
 
-            listBox1.Items.Add(result);
         }
 
         public static string GetShortcutTargetFile(string shortcutFilename)

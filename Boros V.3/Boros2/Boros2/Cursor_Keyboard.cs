@@ -20,7 +20,7 @@ namespace Boros2
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
         public enum dirct { left, right, up, down };
-        public enum EnumOptions { click, enter, back, Null };
+        public enum EnumOptions { click, enter, back};
 
 
         public static void CursorMove(dirct x, int pxl)
