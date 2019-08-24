@@ -1,5 +1,5 @@
 functies:
-	- elke MAP op je bureaublad in te kunnen en ook daar alles te kunnen gebruiken
+	- alle folder inhoud in aparte collommen oplsaan
 
 	- Open songs on spotify
 
@@ -15,6 +15,11 @@ functies:
 	
 	- Volume controle
 
+	- startup als windows opstart
+
+	- switch tussen headset en boxen zonder met kabels te klote
+	
+
 	- get current open window, om te minimizen
 
 	- cursor control mode
@@ -24,12 +29,13 @@ functies:
 		-up, ect..
 		- cursor control off
 		- scroll up/down
-	- dictionaries toggelen wanneer ze nodig zijn zoals bij nums
+	- dictionaries grammar toggelen wanneer ze nodig zijn zoals bij nums
 	- toetsenbord: enter
 	- google iets
-	- Read functie csv Files
-	- Close functie afmaken
+	- Read functie csv Files verschillende collomen
+	- juiste manier op process id's/handles te krijgen op windows
 	- shortcuts kunnen openen en bijbehorend process opslaan
+	- turn off computer, met shutdown -t 10 -> self exit
 
 Bezig met:
 	- Muis controlle, Mousecontrol on, sprongen van x pixels
@@ -39,6 +45,8 @@ Bezig met:
 
 TODO:	- refactor alles
 	- spy++ researchen
+	- comment alles
+- window design mooier maken
 PSEUDO:
 
 	
