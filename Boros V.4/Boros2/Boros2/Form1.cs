@@ -30,7 +30,7 @@ namespace Boros2
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
         bool hold = false;
-        bool checkingSure;
+        bool checkingSure, savePrev;
         int choises;
         string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
 
@@ -43,8 +43,9 @@ namespace Boros2
         Cursor_Keyboard.EnumOptions param2;
         int param3;
 
-        enum Mode { Normal, Cursor, Audio };
+        enum Mode { Normal, Cursor, Audio, Other };
         Mode mode;
+        Mode prevMode;
         int pixelJump;
 
 
@@ -89,10 +90,11 @@ namespace Boros2
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
+            savePrev = false;
             choises = 0;
             checkingSure = false;
             mode = Mode.Normal;
-            pixelJump = 80;
+            pixelJump = 100;
         }
 
         private void UpdDictionarys()
@@ -150,11 +152,32 @@ namespace Boros2
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
             modeSelect(e.Result.Text.ToString());
+            if (savePrev)
+            {
+                prevCommand = e.Result.Text.ToString();
+                savePrev = false;
+            }
         }
 
         void modeSelect(string result)
         {
             listBox1.Items.Add(result);
+            if (hold)
+            {
+                if (result != "borrows respond")
+                {
+                    return;
+                }
+                hold = false;
+                ss.SpeakAsync("Yes?");
+                listBox1.Items.Add("free to talk");
+                return;
+            }
+            if ((checkingSure == true || choises > 0)&&mode != Mode.Other)
+            {
+                prevMode = mode;
+                mode = Mode.Other;
+            }
             if (CommonResults(result))
             {
                 return;
@@ -170,84 +193,14 @@ namespace Boros2
                 case Mode.Audio:
                     AudioMode(result);
                     break;
+                case Mode.Other:
+                    OtherResults(result);
+                    break;
             }
         }
 
         void NormalMode(string result)
         {
-            if (result != "no")
-            {
-                prevCommand = result;
-            }
-
-            if (hold)
-            {
-                if (result != "borrows respond")
-                {
-                    return;
-                }
-                hold = false;
-                ss.SpeakAsync("Yes?");
-                listBox1.Items.Add("free to talk");
-                return;
-            }
-
-            if (choises > 0)
-            {
-                if (result == "nevermind")
-                {
-                    choises = 0;
-                    return;
-                }
-                for (int i = 0; i < choises; i++)
-                {
-                    if (result == nums[i])
-                    {
-                        ss.SpeakAsync("you chose number " + nums[i]);
-                        CloseChoise(i);
-                        choises = 0;
-                        return;
-                    }
-                }
-                ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
-                return;
-            }
-
-            if (checkingSure)
-            {
-                if (result == "yes")
-                {
-                    if (method1 != null)
-                    {
-                        method1(param1);
-                    }
-                    if (method2 != null)
-                    {
-                        method2(param2);
-                    }
-                    if (method3 != null)
-                    {
-                        method3(param3);
-                    }
-                    if (method4 != null)
-                    {
-                        method4();
-                    }
-                    checkingSure = false;
-                    return;
-                }
-                if (result == "no")
-                {
-                    ss.SpeakAsync("ok, we will not " + prevCommand);
-
-                    checkingSure = false;
-                    return;
-                }
-                ss.SpeakAsync("please say yes or no");
-                ss.SpeakAsync("Would you like to " + prevCommand);
-                return;
-            }
-
             if (result.Contains("open"))
             {
                 foreach (KeyValuePair<string, string> kp in pathToName)
@@ -346,6 +299,7 @@ namespace Boros2
                 case "enter":
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
+
             }
         }
         void AudioMode(string result)
@@ -360,12 +314,74 @@ namespace Boros2
                     break;
             }
         }
+        void OtherResults(string result)
+        {
+            if (choises > 0)
+            {
+                if (result == "nevermind")
+                {
+                    choises = 0;
+                    return;
+                }
+                for (int i = 0; i < choises; i++)
+                {
+                    if (result == nums[i])
+                    {
+                        ss.SpeakAsync("you chose number " + nums[i]);
+                        CloseChoise(i);
+                        choises = 0;
+                        mode = prevMode;
+                        return;
+                    }
+                }
+                ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
+                return;
+            }
+
+            if (checkingSure)
+            {
+                if (result == "yes")
+                {
+                    if (method1 != null)
+                    {
+                        method1(param1);
+                    }
+                    if (method2 != null)
+                    {
+                        method2(param2);
+                    }
+                    if (method3 != null)
+                    {
+                        method3(param3);
+                    }
+                    if (method4 != null)
+                    {
+                        method4();
+                    }
+                    checkingSure = false;
+                    mode = prevMode;
+                    return;
+                }
+                if (result == "no")
+                {
+                    ss.SpeakAsync("ok, we will not " + prevCommand);
+
+                    checkingSure = false;
+                    mode = prevMode;
+                    return;
+                }
+                ss.SpeakAsync("please say yes or no");
+                ss.SpeakAsync("Would you like to " + prevCommand);
+                return;
+            }
+        }
 
         bool CommonResults(string result)
         {
             bool x = true;
             switch (result)
             {
+
                 case "audio mode":
                     if (mode != Mode.Audio)
                     {
@@ -433,30 +449,7 @@ namespace Boros2
 
         }
 
-        bool drag = false;
-        int Mx, My;
-
-        private void panel1_MouseDown(object sender, MouseEventArgs e)
-        {
-            drag = true;
-            Mx = Cursor.Position.X - this.Left;
-            My = Cursor.Position.Y - this.Top;
-        }
-
-        private void panel1_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (drag)
-            {
-                Top = Cursor.Position.Y - My;
-                Left = Cursor.Position.X - Mx;
-            }
-        }
-
-        private void panel1_MouseUp(object sender, MouseEventArgs e)
-        {
-            drag = false;
-        }
-
+        
 
 
         void OpenSomething(string pPath, string pName)
@@ -516,7 +509,7 @@ namespace Boros2
             //}
         }
 
-
+        #region confirm
         void Confirm(Action<bool> action, bool param)
         {
             resetMethods();
@@ -542,14 +535,15 @@ namespace Boros2
         }
         void resetMethods()
         {
-            ss.SpeakAsync("are you sure you want to" + prevCommand);
+            ss.SpeakAsync("are you sure you want to do that?");
             method1 = null;
             method2 = null;
             method3 = null;
             method4 = null;
             checkingSure = true;
+            savePrev = true; 
         }
-
+        #endregion
 
         void CloseChrome()
         {
@@ -602,7 +596,30 @@ namespace Boros2
             //    //p.Kill();
             //}
         }
+        #region windowDrag
+        bool drag = false;
+        int Mx, My;
 
+        private void panel1_MouseDown(object sender, MouseEventArgs e)
+        {
+            drag = true;
+            Mx = Cursor.Position.X - this.Left;
+            My = Cursor.Position.Y - this.Top;
+        }
 
+        private void panel1_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (drag)
+            {
+                Top = Cursor.Position.Y - My;
+                Left = Cursor.Position.X - Mx;
+            }
+        }
+
+        private void panel1_MouseUp(object sender, MouseEventArgs e)
+        {
+            drag = false;
+        }
+        #endregion
     }
 }

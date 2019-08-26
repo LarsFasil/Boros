@@ -40,7 +40,6 @@ functies:
 Bezig met:
 	- Muis controlle, Mousecontrol on, sprongen van x pixels
 	- volume opties toevoegen
-	- confirm en alle andere zooi werkend in commonResults
 
 
 TODO:	- refactor alles
