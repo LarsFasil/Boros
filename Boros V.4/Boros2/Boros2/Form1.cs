@@ -23,7 +23,7 @@ namespace Boros2
         PromptBuilder pb = new PromptBuilder();
         SpeechRecognitionEngine sre = new SpeechRecognitionEngine();
         Choices clist = new Choices();
-        new string[] nums = new string[30];
+        new string[] nums = new string[100];
 
         new List<string> holder = new List<string>();
 
@@ -31,7 +31,7 @@ namespace Boros2
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
         bool hold = false;
         bool checkingSure, savePrev;
-        int choises;
+        int IntChoise;
         string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
 
         Action<bool> method1;
@@ -91,7 +91,7 @@ namespace Boros2
             UpdDictionarys();
 
             savePrev = false;
-            choises = 0;
+            IntChoise = 0;
             checkingSure = false;
             mode = Mode.Normal;
             pixelJump = 100;
@@ -173,7 +173,7 @@ namespace Boros2
                 listBox1.Items.Add("free to talk");
                 return;
             }
-            if ((checkingSure == true || choises > 0)&&mode != Mode.Other)
+            if ((checkingSure == true || IntChoise > 0)&&mode != Mode.Other)
             {
                 prevMode = mode;
                 mode = Mode.Other;
@@ -272,7 +272,6 @@ namespace Boros2
                     break;
             }
         }
-
         void CursorMode(string result)
         {
             switch (result)
@@ -299,7 +298,9 @@ namespace Boros2
                 case "enter":
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
-
+                case "pixeljump":
+                    SetupInt(100,ChangePixel);
+                    break;
             }
         }
         void AudioMode(string result)
@@ -316,25 +317,26 @@ namespace Boros2
         }
         void OtherResults(string result)
         {
-            if (choises > 0)
+            if (IntChoise > 0)
             {
                 if (result == "nevermind")
                 {
-                    choises = 0;
+                    IntChoise = 0;
                     return;
                 }
-                for (int i = 0; i < choises; i++)
+                for (int i = 0; i < IntChoise; i++)
                 {
                     if (result == nums[i])
                     {
                         ss.SpeakAsync("you chose number " + nums[i]);
-                        CloseChoise(i);
-                        choises = 0;
+                        // voer actiet uit met i als parameter
+                        IntChoiseAction(i);
+                        IntChoise = 0;
                         mode = prevMode;
                         return;
                     }
                 }
-                ss.SpeakAsync("please choose a number from 0 to " + choises.ToString()); // check of het woord in de dictionary staat
+                ss.SpeakAsync("please choose a number from 0 to " + IntChoise.ToString()); // check of het woord in de dictionary staat
                 return;
             }
 
@@ -375,13 +377,11 @@ namespace Boros2
                 return;
             }
         }
-
         bool CommonResults(string result)
         {
             bool x = true;
             switch (result)
             {
-
                 case "audio mode":
                     if (mode != Mode.Audio)
                     {
@@ -423,7 +423,6 @@ namespace Boros2
                     break;
             }
             return x;
-
         }
 
         public static string GetShortcutTargetFile(string shortcutFilename)
@@ -443,14 +442,10 @@ namespace Boros2
             return string.Empty;
         }
 
-
         void test()
         {
 
         }
-
-        
-
 
         void OpenSomething(string pPath, string pName)
         {
@@ -545,6 +540,21 @@ namespace Boros2
         }
         #endregion
 
+        void ChangePixel(int i)
+        {
+            pixelJump = i * 10;
+        }
+        void IntChoiseAction(int i)
+        {
+            method3(i);
+        }
+        void SetupInt(int i,Action<int> action)
+        {
+            IntChoise = i;
+            method3 = action;
+            ss.SpeakAsync("choose a number between 0 and "+i.ToString());
+        }
+
         void CloseChrome()
         {
             Process[] chromeInstances = Process.GetProcessesByName("chrome");
@@ -581,7 +591,7 @@ namespace Boros2
                 {
                     ss.SpeakAsync("Witch of the " + programIDS[pPath].Count.ToString() + " would you like to close?");
                     cProgramName = pPath;
-                    choises = programIDS[pPath].Count;
+                    IntChoise = programIDS[pPath].Count;
                 }
             }
 

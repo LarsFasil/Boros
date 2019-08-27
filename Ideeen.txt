@@ -36,10 +36,12 @@ functies:
 	- juiste manier op process id's/handles te krijgen op windows
 	- shortcuts kunnen openen en bijbehorend process opslaan
 	- turn off computer, met shutdown -t 10 -> self exit
+	- timer zetten
 
 Bezig met:
-	- Muis controlle, Mousecontrol on, sprongen van x pixels
+	- scrollen in cursormode 
 	- volume opties toevoegen
+	- Alles in commonresults zetten
 
 
 TODO:	- refactor alles
