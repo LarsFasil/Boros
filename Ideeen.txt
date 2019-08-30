@@ -37,12 +37,14 @@ functies:
 	- shortcuts kunnen openen en bijbehorend process opslaan
 	- turn off computer, met shutdown -t 10 -> self exit
 	- timer zetten
+	- meerdere logs
+		- current command list
+		- current mode on
+		- log altijd helemaal naar beneden
+		- borrows output
 
 Bezig met:
-	- scrollen in cursormode 
-	- volume opties toevoegen
-	- Alles in commonresults zetten
-
+	- fix choice bug, 
 
 TODO:	- refactor alles
 	- spy++ researchen

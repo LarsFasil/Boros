@@ -12,15 +12,23 @@ namespace Boros2
     class Cursor_Keyboard
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
-        public static extern void mouse_event(long dwFlags, long dx, long dy, long cButtons, long dwExtraInfo);
+        public static extern void mouse_event(
+            int dwFlags,
+            int dx,
+            int dy,
+            int cButtons,
+            IntPtr dwExtraInfo
+            );
 
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
+        private const int MOUSEEVENTF_WHEEL = 0x0800;
+
         public enum dirct { left, right, up, down };
-        public enum EnumOptions { click, enter, back};
+        public enum EnumOptions { click, enter, back, scrollDown, scrollUp };
 
 
         public static void CursorMove(dirct x, int pxl)
@@ -61,12 +69,24 @@ namespace Boros2
             }
         }
 
+        public static void MouseScroll(int WheelJump, bool up)
+        {
+            int X = Cursor.Position.X;
+            int Y = Cursor.Position.Y;
+            int d = 1;
+            if (!up)
+            {
+                d = -1; 
+            }
+
+            mouse_event(MOUSEEVENTF_WHEEL, X, Y, (WheelJump*120)*d, (IntPtr)0);
+        }
         public static void Audio(int volume)
         {
             AudioManager.SetMasterVolume(AudioManager.GetMasterVolume() + volume);
         }
         public static void Audio(bool mute)
-        { 
+        {
             AudioManager.ToggleMasterVolumeMute();
         }
 
@@ -75,7 +95,8 @@ namespace Boros2
             //Call the imported function with the cursor's current position
             int X = Cursor.Position.X;
             int Y = Cursor.Position.Y;
-            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, 0);
+
+            mouse_event(MOUSEEVENTF_LEFTDOWN | MOUSEEVENTF_LEFTUP, X, Y, 0, (IntPtr)0);
         }
     }
 }

@@ -48,6 +48,7 @@ namespace Boros2
         Mode prevMode;
         int pixelJump;
         int volumeJump;
+        int wheelJump;
         bool selfMute;
 
 
@@ -96,6 +97,7 @@ namespace Boros2
             mode = Mode.Normal;
             pixelJump = 100;
             volumeJump = 20;
+            wheelJump = 4;
             selfMute = false;
         }
 
@@ -171,7 +173,7 @@ namespace Boros2
                 return;
             }
             if (hold)
-            {              
+            {
                 return;
             }
             else
@@ -267,6 +269,13 @@ namespace Boros2
                     Cursor_Keyboard.CursorMove(Cursor_Keyboard.dirct.down, pixelJump);
                     break;
 
+                case "scroll up":
+                    Cursor_Keyboard.MouseScroll(wheelJump, true);
+                    break;
+                case "scroll down":
+                    Cursor_Keyboard.MouseScroll(wheelJump, false);
+                    break;
+
                 case "click":
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.click);
                     break;
@@ -276,7 +285,13 @@ namespace Boros2
                 case "enter":
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
-                case "pixeljump":
+
+
+
+                case "wheel jump":
+                    SetupInt(100, ChangeWheel);
+                    break;
+                case "pixel jump":
                     SetupInt(100, ChangePixel);
                     break;
             }
@@ -546,6 +561,10 @@ namespace Boros2
             savePrev = true;
         }
         #endregion
+        void ChangeWheel(int i)
+        {
+            wheelJump = i;
+        }
         void ChangeVolume(int i)
         {
             volumeJump = i;
