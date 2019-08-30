@@ -47,6 +47,8 @@ namespace Boros2
         Mode mode;
         Mode prevMode;
         int pixelJump;
+        int volumeJump;
+        bool selfMute;
 
 
         CSV csv = new CSV();
@@ -60,9 +62,7 @@ namespace Boros2
             //Setup first Speech recognition engine
             NewSRE();
 
-            ss.SpeakAsync("Hello, I am Boros");
-            //MessageBox.Show(csv.getData());
-
+            Say("Hello, I am Boros");
         }
 
         private void NewSRE()
@@ -95,21 +95,23 @@ namespace Boros2
             checkingSure = false;
             mode = Mode.Normal;
             pixelJump = 100;
+            volumeJump = 20;
+            selfMute = false;
         }
 
         private void UpdDictionarys()
         {
             //Is dit nummers toevoegen?, moet beter
-            for (int i = 0; i < nums.Length - 10; i++)
+            for (int i = 0; i < nums.Length; i++)
             {
-                nums[i] = (i + 1).ToString();
+                nums[i] = (i).ToString();
                 //listBox1.Items.Add(nums[i]);
             }
-            for (int i = 0; i < 10; i++)
-            {
-                nums[i + (nums.Length - 10)] = "1";
-                //listBox1.Items.Add(nums[i + (nums.Length - 10)]);
-            }
+            //for (int i = 0; i < 10; i++)
+            //{
+            //    nums[i + (nums.Length - 10)] = "1";
+            //    //listBox1.Items.Add(nums[i + (nums.Length - 10)]);
+            //}
 
             clist.Add(nums);
             //clist.Add(holder.ToArray());
@@ -161,27 +163,31 @@ namespace Boros2
 
         void modeSelect(string result)
         {
-            listBox1.Items.Add(result);
-            if (hold)
+            if (result == "respond")
             {
-                if (result != "borrows respond")
-                {
-                    return;
-                }
                 hold = false;
-                ss.SpeakAsync("Yes?");
+                Say("Yes?");
                 listBox1.Items.Add("free to talk");
                 return;
             }
-            if ((checkingSure == true || IntChoise > 0)&&mode != Mode.Other)
+            if (hold)
+            {              
+                return;
+            }
+            else
+            {
+                listBox1.Items.Add(result);
+            }
+            if ((checkingSure == true || IntChoise > 0) && mode != Mode.Other)
             {
                 prevMode = mode;
                 mode = Mode.Other;
             }
-            if (CommonResults(result))
+            else if (CommonResults(result))
             {
                 return;
             }
+
             switch (mode)
             {
                 case Mode.Normal:
@@ -211,7 +217,7 @@ namespace Boros2
                         return;
                     }
                 }
-                ss.SpeakAsync("could not find that name in dictionary");
+                Say("could not find that name in dictionary");
                 return;
             }
 
@@ -225,50 +231,22 @@ namespace Boros2
                         return;
                     }
                 }
-                ss.SpeakAsync("could not find that name in dictionary");
+                Say("could not find that name in dictionary");
                 return;
             }
 
             switch (result)
             {
-
                 case "borrows":
-                    ss.SpeakAsync("Yes?");
-                    break;
-                case "21":
-                    ss.SpeakAsync("Hi lars");
+                    Say("Yes?");
                     break;
 
                 case "what time is it":
-                    ss.SpeakAsync("The time is" + DateTime.Now.ToLongTimeString());
+                    Say("The time is" + DateTime.Now.ToLongTimeString());
                     break;
-
 
                 case "open notepad":
                     OpenSomething("notepad", "notepad");
-                    break;
-
-
-                case "test":
-                    test();
-                    break;
-
-                case "clear log":
-                    ss.SpeakAsync("Log cleared");
-                    listBox1.Items.Clear();
-                    break;
-                case "show log":
-                    ss.SpeakAsync("Showing Log");
-                    this.WindowState = FormWindowState.Minimized;
-                    this.WindowState = FormWindowState.Normal;
-                    break;
-                case "hide log":
-                    ss.SpeakAsync("Hiding Log");
-                    this.WindowState = FormWindowState.Minimized;
-                    break;
-                case "shut up":
-                    ss.SpeakAsync("On Hold");
-                    hold = true;
                     break;
             }
         }
@@ -299,7 +277,7 @@ namespace Boros2
                     Cursor_Keyboard.ckEvent(Cursor_Keyboard.EnumOptions.enter);
                     break;
                 case "pixeljump":
-                    SetupInt(100,ChangePixel);
+                    SetupInt(100, ChangePixel);
                     break;
             }
         }
@@ -307,11 +285,20 @@ namespace Boros2
         {
             switch (result)
             {
-                case "mute":
+                case "mute computer":
                     Cursor_Keyboard.Audio(true);
                     break;
                 case "volume":
-                    Cursor_Keyboard.Audio(50);
+                    SetupInt(100, ChangeVolume);
+                    break;
+                case "up":
+                    Cursor_Keyboard.Audio(volumeJump);
+                    break;
+                case "down":
+                    Cursor_Keyboard.Audio(-volumeJump);
+                    break;
+                case "mute self":
+                    selfMute = !selfMute;
                     break;
             }
         }
@@ -328,7 +315,7 @@ namespace Boros2
                 {
                     if (result == nums[i])
                     {
-                        ss.SpeakAsync("you chose number " + nums[i]);
+                        Say("you chose number " + nums[i]);
                         // voer actiet uit met i als parameter
                         IntChoiseAction(i);
                         IntChoise = 0;
@@ -336,7 +323,7 @@ namespace Boros2
                         return;
                     }
                 }
-                ss.SpeakAsync("please choose a number from 0 to " + IntChoise.ToString()); // check of het woord in de dictionary staat
+                Say("please choose a number from 0 to " + IntChoise.ToString()); // check of het woord in de dictionary staat
                 return;
             }
 
@@ -366,14 +353,14 @@ namespace Boros2
                 }
                 if (result == "no")
                 {
-                    ss.SpeakAsync("ok, we will not " + prevCommand);
+                    Say("ok, we will not " + prevCommand);
 
                     checkingSure = false;
                     mode = prevMode;
                     return;
                 }
-                ss.SpeakAsync("please say yes or no");
-                ss.SpeakAsync("Would you like to " + prevCommand);
+                Say("please say yes or no");
+                Say("Would you like to " + prevCommand);
                 return;
             }
         }
@@ -382,37 +369,57 @@ namespace Boros2
             bool x = true;
             switch (result)
             {
+                case "clear log":
+                    Say("Log cleared");
+                    listBox1.Items.Clear();
+                    break;
+                case "show log":
+                    Say("Showing Log");
+                    this.WindowState = FormWindowState.Minimized;
+                    this.WindowState = FormWindowState.Normal;
+                    break;
+                case "hide log":
+                    Say("Hiding Log");
+                    this.WindowState = FormWindowState.Minimized;
+                    break;
+                case "shut up":
+                    Say("On Hold");
+                    hold = true;
+                    break;
+                case "test":
+                    test();
+                    break;
                 case "audio mode":
                     if (mode != Mode.Audio)
                     {
                         mode = Mode.Audio;
-                        ss.SpeakAsync("Audio Mode on");
+                        Say("Audio Mode on");
                     }
                     else
                     {
-                        ss.SpeakAsync("Audio Mode is already on");
+                        Say("Audio Mode is already on");
                     }
                     break;
                 case "cursor mode":
                     if (mode != Mode.Cursor)
                     {
                         mode = Mode.Cursor;
-                        ss.SpeakAsync("Cursor Mode on");
+                        Say("Cursor Mode on");
                     }
                     else
                     {
-                        ss.SpeakAsync("Cursor Mode is already on");
+                        Say("Cursor Mode is already on");
                     }
                     break;
                 case "normal mode":
                     if (mode != Mode.Normal)
                     {
                         mode = Mode.Normal;
-                        ss.SpeakAsync("Normal Mode on");
+                        Say("Normal Mode on");
                     }
                     else
                     {
-                        ss.SpeakAsync("Normal Mode is already on");
+                        Say("Normal Mode is already on");
                     }
                     break;
                 case "exit":
@@ -467,7 +474,7 @@ namespace Boros2
 
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");
-            ss.SpeakAsync("Opening " + pName);
+            Say("Opening " + pName);
 
             clist.Add("close " + pName);
             sre.Dispose();
@@ -530,16 +537,19 @@ namespace Boros2
         }
         void resetMethods()
         {
-            ss.SpeakAsync("are you sure you want to do that?");
+            Say("are you sure you want to do that?");
             method1 = null;
             method2 = null;
             method3 = null;
             method4 = null;
             checkingSure = true;
-            savePrev = true; 
+            savePrev = true;
         }
         #endregion
-
+        void ChangeVolume(int i)
+        {
+            volumeJump = i;
+        }
         void ChangePixel(int i)
         {
             pixelJump = i * 10;
@@ -548,11 +558,19 @@ namespace Boros2
         {
             method3(i);
         }
-        void SetupInt(int i,Action<int> action)
+        void SetupInt(int i, Action<int> action)
         {
             IntChoise = i;
             method3 = action;
-            ss.SpeakAsync("choose a number between 0 and "+i.ToString());
+            Say("choose a number between 0 and " + i.ToString());
+        }
+
+        void Say(string s)
+        {
+            if (!selfMute)
+            {
+                ss.SpeakAsync(s);
+            }
         }
 
         void CloseChrome()
@@ -577,7 +595,7 @@ namespace Boros2
 
             if (programIDS.ContainsKey(pPath) == false || programIDS[pPath].Count == 0)
             {
-                ss.SpeakAsync(pPath + " is not running at the moment");
+                Say(pPath + " is not running at the moment");
             }
             else
             {
@@ -589,7 +607,7 @@ namespace Boros2
                 }
                 else
                 {
-                    ss.SpeakAsync("Witch of the " + programIDS[pPath].Count.ToString() + " would you like to close?");
+                    Say("Witch of the " + programIDS[pPath].Count.ToString() + " would you like to close?");
                     cProgramName = pPath;
                     IntChoise = programIDS[pPath].Count;
                 }

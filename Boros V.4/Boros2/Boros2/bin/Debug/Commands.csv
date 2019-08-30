@@ -7,7 +7,7 @@ show log
 hide log
 yes
 no
-borrows respond
+respond
 clear log
 test
 left
@@ -17,10 +17,11 @@ down
 click
 back
 enter
-mute
+mute computer
 volume
 audio mode
 cursor mode
 normal mode
 pixeljump
 nevermind
+mute self

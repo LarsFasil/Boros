@@ -63,7 +63,7 @@ namespace Boros2
 
         public static void Audio(int volume)
         {
-            AudioManager.SetMasterVolume(volume);
+            AudioManager.SetMasterVolume(AudioManager.GetMasterVolume() + volume);
         }
         public static void Audio(bool mute)
         { 
