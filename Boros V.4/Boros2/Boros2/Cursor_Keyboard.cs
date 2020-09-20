@@ -11,7 +11,7 @@ namespace Boros2
 {
     class Cursor_Keyboard
     {
-        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.Cdecl)]
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
         public static extern void mouse_event(
             int dwFlags,
             int dx,

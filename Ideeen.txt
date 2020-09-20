@@ -42,14 +42,16 @@ functies:
 		- current mode on
 		- log altijd helemaal naar beneden
 		- borrows output
+	- Show commands - show list of all current commands
+	- Echo off - make boros stop confirming everything. maybe just a bell when it got a command
 
 Bezig met:
-	- fix choice bug, 
+	- fix choice bug
+	- COMMENT ALLES
 
 TODO:	- refactor alles
 	- spy++ researchen
 	- comment alles
-- window design mooier maken
 PSEUDO:
 
 	

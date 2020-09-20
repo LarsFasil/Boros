@@ -23,9 +23,9 @@ namespace Boros2
         PromptBuilder pb = new PromptBuilder();
         SpeechRecognitionEngine sre = new SpeechRecognitionEngine();
         Choices clist = new Choices();
-        new string[] nums = new string[100];
+        string[] sa_nums;
 
-        new List<string> holder = new List<string>();
+        new List<string> holder = new List<string>();                                               // ??????
 
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
@@ -57,8 +57,9 @@ namespace Boros2
 
         public Form1()
         {
-
+            // Initializes window
             InitializeComponent();
+
             InitializeVars();
             //Setup first Speech recognition engine
             NewSRE();
@@ -88,6 +89,10 @@ namespace Boros2
             path_Commands = @Directory.GetCurrentDirectory() + "\\Commands.csv";
             path_Dict = @Directory.GetCurrentDirectory() + "\\Dictionary.csv";
 
+            // What numbers Boros knows 0-100
+            sa_nums = new string[101];
+
+            // Add every file on Desktop to the dictionary
             ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
             UpdDictionarys();
 
@@ -103,54 +108,49 @@ namespace Boros2
 
         private void UpdDictionarys()
         {
-            //Is dit nummers toevoegen?, moet beter
-            for (int i = 0; i < nums.Length; i++)
+            // Making a string array of numbers
+            for (int i = 0; i < sa_nums.Length; i++)
             {
-                nums[i] = (i).ToString();
-                //listBox1.Items.Add(nums[i]);
+                sa_nums[i] = (i).ToString();
             }
-            //for (int i = 0; i < 10; i++)
-            //{
-            //    nums[i + (nums.Length - 10)] = "1";
-            //    //listBox1.Items.Add(nums[i + (nums.Length - 10)]);
-            //}
 
-            clist.Add(nums);
-            //clist.Add(holder.ToArray());
+            // Add numbers, hard commands and flex commands to integrated command list
+            clist.Add(sa_nums);
             clist.Add(csv.getData(path_Commands));
             clist.Add(csv.getData(path_Dict));
-            //clist.Add(new string[] { "hello", "how are you", "open chrome", "open music", "what time is it", //"close chrome",
-            //"close music", "exit", "shut up please", "563", "show log", "hide log", "yes", "no", "borrows respond", "clear log", "open notepad","close notepad","test", "open word"});
         }
 
         private void ProcessDirectory(string dirPath)
         {
-            string[] fileEntries = Directory.GetFiles(dirPath);
-            //string[] files = new string[fileEntries.Count]; // hoeft niet
+            // Makes array of all files paths
+            string[] sa_filePaths = Directory.GetFiles(dirPath);
 
-            //fix assap
-            string[] sa_data = new string[fileEntries.Length];
+            // Declare array for new commands regarding the files
+            string[] sa_commands = new string[sa_filePaths.Length];
+
             int z = 0;
-            foreach (string filePath in fileEntries)
+            foreach (string filePath in sa_filePaths)
             {
+                // Get only the filename from the path
+                string fileName = Path.GetFileNameWithoutExtension(filePath).ToLower();
 
-                sa_data[z] = "open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", "");
-                //data.AppendLine("open " + Path.GetFileName(filePath).ToLower().Replace(".exe", "").Replace(".url", "").Replace(".lnk", "").Replace(".txt", ""));
+                // Print file to Boros window
+                listBox1.Items.Add(fileName);
+
+                // Put 'open' before every filename and add them to the command array 
+                // if you make this 2 sepperate commands it doesn't work fluently
+                sa_commands[z] = "open " + fileName;
                 z++;
             }
 
-
-            for (int i = 0; i < fileEntries.Length; i++)
+            // Match all the new commands with their paths in a dictionary
+            for (int i = 0; i < sa_filePaths.Length; i++)
             {
-                pathToName.Add(fileEntries[i], sa_data[i]); //maybe later open voor zetten
+                pathToName.Add(sa_filePaths[i], sa_commands[i]);
             }
 
-            foreach (KeyValuePair<string, string> kp in pathToName)
-            {
-                listBox1.Items.Add(kp.Value.Replace("open ", ""));
-            }
-
-            csv.UpdateData(sa_data, path_Dict);
+            // Update the flexible dictionary
+            csv.UpdateData(sa_commands, path_Dict);
         }
 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
@@ -328,9 +328,9 @@ namespace Boros2
                 }
                 for (int i = 0; i < IntChoise; i++)
                 {
-                    if (result == nums[i])
+                    if (result == sa_nums[i])
                     {
-                        Say("you chose number " + nums[i]);
+                        Say("you chose number " + sa_nums[i]);
                         // voer actiet uit met i als parameter
                         IntChoiseAction(i);
                         IntChoise = 0;
@@ -464,14 +464,11 @@ namespace Boros2
             return string.Empty;
         }
 
-        void test()
-        {
-
-        }
-
         void OpenSomething(string pPath, string pName)
         {
             Process p;
+            
+            // If the path is a shortcut delete some shit       ????
             if (pPath.Contains(".lnk"))
             {
                 string RealPath = GetShortcutTargetFile(pPath);
@@ -485,7 +482,6 @@ namespace Boros2
             {
                 p = Process.Start(pPath);
             }
-
 
             listBox1.Items.Add(pPath);
             pName = pName.Replace("open ", "");

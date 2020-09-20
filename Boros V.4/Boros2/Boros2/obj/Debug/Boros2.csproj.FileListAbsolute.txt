@@ -48,3 +48,14 @@ C:\Users\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.csprojRes
 C:\Users\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.Form1.resources
 C:\Users\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.Properties.Resources.resources
 C:\Users\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.csproj.GenerateResource.Cache
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\bin\Debug\Boros2.exe.config
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\bin\Debug\Boros2.exe
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\bin\Debug\Boros2.pdb
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.csprojAssemblyReference.cache
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Interop.Shell32.dll
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.csproj.ResolveComReference.cache
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.Form1.resources
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.Properties.Resources.resources
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.csproj.GenerateResource.cache
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.exe
+F:\Lars\Documents\Boros\Boros V.4\Boros2\Boros2\obj\Debug\Boros2.pdb
