@@ -60,8 +60,14 @@ namespace Boros2
             // Initializes window
             InitializeComponent();
 
+            // Initialize variables
             InitializeVars();
-            //Setup first Speech recognition engine
+
+            // Add every file on Desktop to the dictionary
+            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
+            UpdDictionarys();
+
+            // Setup first Speech Recognition Engine
             NewSRE();
 
             Say("Hello, I am Boros");
@@ -86,15 +92,12 @@ namespace Boros2
 
         private void InitializeVars()
         {
+            // Paths to CSV files that store the hard and flexible commands
             path_Commands = @Directory.GetCurrentDirectory() + "\\Commands.csv";
             path_Dict = @Directory.GetCurrentDirectory() + "\\Dictionary.csv";
 
             // What numbers Boros knows 0-100
             sa_nums = new string[101];
-
-            // Add every file on Desktop to the dictionary
-            ProcessDirectory(@"C:\Users\" + Environment.UserName + "\\Desktop");
-            UpdDictionarys();
 
             savePrev = false;
             IntChoise = 0;
@@ -402,7 +405,7 @@ namespace Boros2
                     hold = true;
                     break;
                 case "test":
-                    test();
+                    //test();
                     break;
                 case "audio mode":
                     if (mode != Mode.Audio)
