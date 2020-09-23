@@ -48,6 +48,8 @@ functies:
 Bezig met:
 	- fix choice bug
 	- COMMENT ALLES
+	- command history
+	- listbox items
 
 TODO:	- refactor alles
 	- spy++ researchen

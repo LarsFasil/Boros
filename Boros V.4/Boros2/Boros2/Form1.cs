@@ -25,8 +25,6 @@ namespace Boros2
         Choices clist = new Choices();
         string[] sa_nums;
 
-        new List<string> holder = new List<string>();                                               // ??????
-
         Dictionary<string, string> pathToName = new Dictionary<string, string>();
         Dictionary<string, List<int>> programIDS = new Dictionary<string, List<int>>();
         bool hold = false;
@@ -51,9 +49,16 @@ namespace Boros2
         int wheelJump;
         bool selfMute;
 
+        tBox history;
+        tBox boros;
 
         CSV csv = new CSV();
 
+        public struct tBox
+        {
+            public Color color;
+            public List<string> stringList;
+        };
 
         public Form1()
         {
@@ -98,6 +103,10 @@ namespace Boros2
 
             // What numbers Boros knows 0-100
             sa_nums = new string[101];
+
+            history.color = Color.Lime;
+            boros.color = Color.Red;
+            history.stringList = new List<string>();
 
             savePrev = false;
             IntChoise = 0;
@@ -156,9 +165,13 @@ namespace Boros2
             csv.UpdateData(sa_commands, path_Dict);
         }
 
+        // Gets fired when speech is recognized 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
-            modeSelect(e.Result.Text.ToString());
+            Filter1(e.Result.Text.ToString());
+
+            // Save all commands in a List
+            history.stringList.Add(e.Result.Text.ToString());
             if (savePrev)
             {
                 prevCommand = e.Result.Text.ToString();
@@ -166,7 +179,7 @@ namespace Boros2
             }
         }
 
-        void modeSelect(string result)
+        void Filter1(string result)
         {
             if (result == "respond")
             {
@@ -315,9 +328,6 @@ namespace Boros2
                 case "down":
                     Cursor_Keyboard.Audio(-volumeJump);
                     break;
-                case "mute self":
-                    selfMute = !selfMute;
-                    break;
             }
         }
         void OtherResults(string result)
@@ -382,6 +392,9 @@ namespace Boros2
                 return;
             }
         }
+
+        // Summary: 
+        // Commands that can always be called.
         bool CommonResults(string result)
         {
             bool x = true;
@@ -405,7 +418,7 @@ namespace Boros2
                     hold = true;
                     break;
                 case "test":
-                    //test();
+                    test(history);
                     break;
                 case "audio mode":
                     if (mode != Mode.Audio)
@@ -470,7 +483,7 @@ namespace Boros2
         void OpenSomething(string pPath, string pName)
         {
             Process p;
-            
+
             // If the path is a shortcut delete some shit       ????
             if (pPath.Contains(".lnk"))
             {
@@ -591,6 +604,12 @@ namespace Boros2
             }
         }
 
+        void Print(string s)
+        {
+            // Commands - History - Boros
+            listBox1.Items.Add(s);
+        }
+
         void CloseChrome()
         {
             Process[] chromeInstances = Process.GetProcessesByName("chrome");
@@ -642,6 +661,7 @@ namespace Boros2
             //    //p.Kill();
             //}
         }
+
         #region windowDrag
         bool drag = false;
         int Mx, My;
@@ -667,5 +687,28 @@ namespace Boros2
             drag = false;
         }
         #endregion
+        void test(tBox tb)
+        {
+            listBox1.ForeColor = tb.color;
+            listBox1.Items.Clear();
+            for (int i = 0; i < tb.stringList.Count; i++)
+            {
+                listBox1.Items.Add(tb.stringList[i]);
+            }
+
+
+            //foreach (var item in listBox1.Items)
+            //{
+            //    Console.WriteLine(item);
+            //}
+
+            
+
+            //for (int i = 0; i < sl_sessionCommands.Count; i++)
+            //{
+            //    Console.WriteLine(i + ": " + sl_sessionCommands[i]);
+            //}
+
+        }
     }
 }
