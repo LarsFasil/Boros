@@ -30,7 +30,7 @@ namespace Boros2
         bool hold = false;
         bool checkingSure, savePrev;
         int IntChoise;
-        string prevCommand, toClose, cProgramName, path_Commands, path_Dict;
+        string prevCommand, toClose, cProgramName, path_Commands, path_Dict, current_tbox;
 
         Action<bool> method1;
         Action<Cursor_Keyboard.EnumOptions> method2;
@@ -41,23 +41,29 @@ namespace Boros2
         Cursor_Keyboard.EnumOptions param2;
         int param3;
 
-        enum Mode { Normal, Cursor, Audio, Other };
-        Mode mode;
-        Mode prevMode;
+        public enum Mode { Normal, Cursor, Audio, Other };
+        Mode mode, prevMode;
         int pixelJump;
         int volumeJump;
         int wheelJump;
         bool selfMute;
 
-        tBox history;
-        tBox boros;
+        tBox[] tboxA;
 
         CSV csv = new CSV();
 
         public struct tBox
         {
+            public string name;
             public Color color;
             public List<string> stringList;
+
+            public void SetValues(string n, Color c, List<string> ls)
+            {
+                name = n;
+                color = c;
+                stringList = ls;
+            }
         };
 
         public Form1()
@@ -104,10 +110,13 @@ namespace Boros2
             // What numbers Boros knows 0-100
             sa_nums = new string[101];
 
-            history.color = Color.Lime;
-            boros.color = Color.Red;
-            history.stringList = new List<string>();
+            tboxA = new tBox[] { new tBox(), new tBox(), new tBox() , new tBox()};
+            tboxA[0].SetValues("history", Color.Lime, new List<string>());
+            tboxA[1].SetValues("boros", Color.Red, new List<string>());
+            tboxA[2].SetValues("soft commands", Color.White, new List<string>());
+            tboxA[3].SetValues("hard commands", Color.White, new List<string>());
 
+            current_tbox = "history";
             savePrev = false;
             IntChoise = 0;
             checkingSure = false;
@@ -128,7 +137,9 @@ namespace Boros2
 
             // Add numbers, hard commands and flex commands to integrated command list
             clist.Add(sa_nums);
-            clist.Add(csv.getData(path_Commands));
+            //clist.Add(csv.getData(path_Commands));
+            clist.Add(csv.GETIT(path_Commands,(int)Mode.Normal));                               //LAST SHIT IVE DONE
+            
             clist.Add(csv.getData(path_Dict));
         }
 
@@ -147,7 +158,7 @@ namespace Boros2
                 string fileName = Path.GetFileNameWithoutExtension(filePath).ToLower();
 
                 // Print file to Boros window
-                listBox1.Items.Add(fileName);
+                tboxA[2].stringList.Add(fileName);
 
                 // Put 'open' before every filename and add them to the command array 
                 // if you make this 2 sepperate commands it doesn't work fluently
@@ -168,10 +179,11 @@ namespace Boros2
         // Gets fired when speech is recognized 
         private void Sre_SpeechRecognized(object sender, SpeechRecognizedEventArgs e)
         {
+            // Checks what was said and acts accordingly
             Filter1(e.Result.Text.ToString());
 
             // Save all commands in a List
-            history.stringList.Add(e.Result.Text.ToString());
+            tboxA[0].stringList.Add(e.Result.Text.ToString());
             if (savePrev)
             {
                 prevCommand = e.Result.Text.ToString();
@@ -192,18 +204,11 @@ namespace Boros2
             {
                 return;
             }
-            else
-            {
-                listBox1.Items.Add(result);
-            }
-            if ((checkingSure == true || IntChoise > 0) && mode != Mode.Other)
+
+            if ((checkingSure || IntChoise > 0) && mode != Mode.Other)
             {
                 prevMode = mode;
                 mode = Mode.Other;
-            }
-            else if (CommonResults(result))
-            {
-                return;
             }
 
             switch (mode)
@@ -221,6 +226,9 @@ namespace Boros2
                     OtherResults(result);
                     break;
             }
+
+            // Checks if the result is in the list of common results
+            CommonResults(result);
         }
 
         void NormalMode(string result)
@@ -393,11 +401,9 @@ namespace Boros2
             }
         }
 
-        // Summary: 
         // Commands that can always be called.
-        bool CommonResults(string result)
+        void CommonResults(string result)
         {
-            bool x = true;
             switch (result)
             {
                 case "clear log":
@@ -418,7 +424,7 @@ namespace Boros2
                     hold = true;
                     break;
                 case "test":
-                    test(history);
+                    test();
                     break;
                 case "audio mode":
                     if (mode != Mode.Audio)
@@ -457,10 +463,8 @@ namespace Boros2
                     Confirm(Application.Exit);
                     break;
                 default:
-                    x = false;
                     break;
             }
-            return x;
         }
 
         public static string GetShortcutTargetFile(string shortcutFilename)
@@ -598,16 +602,30 @@ namespace Boros2
 
         void Say(string s)
         {
+            tboxA[1].stringList.Add(s);
             if (!selfMute)
             {
                 ss.SpeakAsync(s);
             }
         }
 
-        void Print(string s)
+        void Print(tBox tb, string s)
         {
-            // Commands - History - Boros
-            listBox1.Items.Add(s);
+            tb.stringList.Add(s);
+            if (tb.name == current_tbox)
+            {
+                listBox1.Items.Add(s);
+            }
+        }
+
+        void UpdateTextBox(tBox tb)
+        {
+            listBox1.ForeColor = tb.color;
+            listBox1.Items.Clear();
+            for (int i = 0; i < tb.stringList.Count; i++)
+            {
+                listBox1.Items.Add(tb.stringList[i]);
+            }
         }
 
         void CloseChrome()
@@ -687,14 +705,9 @@ namespace Boros2
             drag = false;
         }
         #endregion
-        void test(tBox tb)
+        void test()
         {
-            listBox1.ForeColor = tb.color;
-            listBox1.Items.Clear();
-            for (int i = 0; i < tb.stringList.Count; i++)
-            {
-                listBox1.Items.Add(tb.stringList[i]);
-            }
+            Console.WriteLine(csv.GETIT(path_Commands, 1));
 
 
             //foreach (var item in listBox1.Items)
@@ -702,7 +715,7 @@ namespace Boros2
             //    Console.WriteLine(item);
             //}
 
-            
+
 
             //for (int i = 0; i < sl_sessionCommands.Count; i++)
             //{

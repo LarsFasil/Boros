@@ -1,30 +1,31 @@
-hello
-how are you
-what time is it
-exit
-shut up
-show log
-hide log
-yes
-no
-respond
-clear log
-test
-left
-right
-up
-down
-click
-back
-enter
-mute computer
-volume
-audio mode
-cursor mode
-normal mode
-pixel jump
-nevermind
-mute self
-wheel jump
-scroll up
-scroll down
+NORMAL,CURSOR,AUDIO,OTHER
+hello,hi,ola,
+how are you,,,
+what time is it,,,
+exit,,,
+shut up,,,
+show log,,,
+hide log,,,
+yes,,,
+no,,,
+respond,,,
+clear log,,,
+test,,,
+left,,,
+right,,,
+up,,,
+down,,,
+click,,,
+back,,,
+enter,,,
+mute computer,,,
+volume,,,
+audio mode,,,
+cursor mode,,,
+normal mode,,,
+pixel jump,,,
+nevermind,,,
+mute self,,,
+wheel jump,,,
+scroll up,,,
+scroll down,,,

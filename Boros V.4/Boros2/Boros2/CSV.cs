@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Office.Interop.Excel;
 using _Excel = Microsoft.Office.Interop.Excel;
+using Microsoft.VisualBasic.FileIO;
 
 
 namespace Boros2
@@ -32,6 +33,31 @@ namespace Boros2
                     stream.WriteLine(item);
                 }
                 
+            }
+        }
+
+        public string[] GETIT(string path, int column)
+        {
+            using (TextFieldParser csvParser = new TextFieldParser(path))
+            {
+                csvParser.CommentTokens = new string[] { "#" };
+                csvParser.SetDelimiters(new string[] { "," });
+                csvParser.HasFieldsEnclosedInQuotes = true;
+
+                // Skip the row with the column names
+                csvParser.ReadLine();
+
+                List<string> StringList = new List<string>();
+
+                while (!csvParser.EndOfData)
+                {
+                    // Read current line fields, pointer moves to the next line.
+                    string[] fields = csvParser.ReadFields();
+                    //string Name = fields[0];
+                    //string Address = fields[1];
+                    StringList.Add(fields[column]);
+                }
+                return StringList.ToArray();
             }
         }
     }
